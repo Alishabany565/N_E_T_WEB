@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="css/landing.css"/>
+</head>
+
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
+
+  <!-- Floating Accessibility Button -->
+  <button id="a11yFab" class="a11y-fab" type="button" aria-label="Accessibility" aria-expanded="false" aria-controls="a11yPanel" title="Accessibility">
+    <span aria-hidden="true">♿</span>
+  </button>
+
+  <!-- Accessibility Panel -->
+  <div id="a11yPanel" class="a11y-panel" role="dialog" aria-modal="true" aria-labelledby="a11yPanelTitle" hidden>
+    <div class="a11y-panel-head">
+      <h3 id="a11yPanelTitle" data-i18n="accessibility">Accessibility</h3>
+      <button id="a11yClose" class="a11y-close" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="a11y-panel-body">
+      <button class="a11y-opt" type="button" data-a11y="bigtext" data-i18n="biggerText">Bigger text</button>
+      <button class="a11y-opt" type="button" data-a11y="contrast" data-i18n="highContrast">High contrast</button>
+      <button class="a11y-opt" type="button" data-a11y="underline" data-i18n="underlineLinks">Underline links</button>
+      <button class="a11y-opt danger" type="button" data-a11y="reset" data-i18n="a11yReset">Reset</button>
+    </div>
+  </div>
+
+  <header class="topbar" role="banner">
+    <div class="brand" aria-label="Brand">
+      <span class="logo" aria-hidden="true">◎</span>
+      <div>
+        <div class="title" data-i18n="appTitle">Expense Tracker</div>
+        <div class="sub" data-i18n="landingTag">Smart tracking • Clear insights</div>
+      </div>
+    </div>
+
+    <div class="right-actions">
+      <label class="sr-only" for="langSelect" data-i18n="language">Language</label>
+      <select id="langSelect" class="select" aria-label="Language">
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+        <option value="he">עברית</option>
+      </select>
+      <button class="btn" id="btnOpenLogin" data-i18n="login">Login</button>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" role="main">
+    <section class="hero" aria-label="Intro">
+      <div class="hero-content">
+        <h1 data-i18n="landingHeadline">Track your spending smarter</h1>
+        <p data-i18n="landingText">
+          Add expenses in seconds, see your monthly total, and view simple insights.
+        </p>
+
+        <div class="cta">
+          <button class="btn primary" id="btnOpenRegister" data-i18n="register">Create account</button>
+        </div>
+
+        <ul class="bullets" aria-label="Highlights">
+          <li data-i18n="landingB1">Add expenses fast (amount, category, date)</li>
+          <li data-i18n="landingB2">Search + simple filters</li>
+          <li data-i18n="landingB3">Charts and budget warning</li>
+          <li data-i18n="landingB4">Currency conversion via external API</li>
+        </ul>
+      </div>
+
+      <div class="hero-image" aria-hidden="true">
+        <div class="glass">
+          <div class="card-mini">
+            <div class="pill">ILS</div>
+            <div class="pill">USD</div>
+            <div class="pill">EUR</div>
+          </div>
+          <div class="chart-mini"></div>
+          <div class="lines">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="info" aria-label="Info">
+      <div class="info-card">
+        <h2 data-i18n="landingPrivacyTitle">Privacy</h2>
+        <p data-i18n="landingPrivacyText">
+          Your data stays on your device (localStorage).
+        </p>
+      </div>
+      <div class="info-card">
+        <h2 data-i18n="landingTipTitle">Tip</h2>
+        <p data-i18n="landingTipText">Set a monthly budget to get a simple warning when you get close.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Login -->
+  <div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="loginTitle" data-i18n="login">Login</h3>
+        <button class="icon-btn" data-close="login" aria-label="Close">✕</button>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <label class="lbl">
+          <span data-i18n="email">Email</span>
+          <input type="email" id="loginEmail" autocomplete="email" required />
+        </label>
+
+        <label class="lbl">
+          <span data-i18n="password">Password</span>
+          <input type="password" id="loginPassword" autocomplete="current-password" required />
+        </label>
+
+        <div id="loginErrors" class="errors" aria-live="polite"></div>
+
+        <button class="btn primary full" type="submit" data-i18n="login">Login</button>
+      </form>
+
+      <p class="switch">
+        <span data-i18n="noAccount">No account?</span>
+        <button class="link" id="toRegister" type="button" data-i18n="register">Create account</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal: Register -->
+  <div class="modal" id="registerModal" role="dialog" aria-modal="true" aria-labelledby="registerTitle" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="registerTitle" data-i18n="register">Create account</h3>
+        <button class="icon-btn" data-close="register" aria-label="Close">✕</button>
+      </div>
+
+      <form id="registerForm" novalidate>
+        <label class="lbl">
+          <span data-i18n="fullName">Full name</span>
+          <input type="text" id="regName" autocomplete="name" required />
+        </label>
+
+        <label class="lbl">
+          <span data-i18n="email">Email</span>
+          <input type="email" id="regEmail" autocomplete="email" required />
+        </label>
+
+        <label class="lbl">
+          <span data-i18n="password">Password</span>
+          <input type="password" id="regPassword" autocomplete="new-password" required />
+        </label>
+
+        <div id="registerErrors" class="errors" aria-live="polite"></div>
+
+        <button class="btn primary full" type="submit" data-i18n="register">Create account</button>
+      </form>
+
+      <p class="switch">
+        <span data-i18n="haveAccount">Already have an account?</span>
+        <button class="link" id="toLogin" type="button" data-i18n="login">Login</button>
+      </p>
+    </div>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/a11y.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/landing.js"></script>
+</body>
+</html>

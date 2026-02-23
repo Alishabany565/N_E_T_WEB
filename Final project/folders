@@ -1,0 +1,20 @@
+expense-tracker/
+  index.html +          1 2 3 4 5
+  app.html  +           1 2 3 4 5 6 7 8    
+  css/
+    landing.css +       1 2 3 4 5
+    app.css  +          1 2 3 4 5
+  js/
+    i18n.js +           1 2 3 4 5 6 7 8
+    a11y.js +           1 2 3 4 5
+    auth.js +           1 2 3 4 5
+    storage.js +        1 2 3 4 5 6
+    validation.js +     1 2 3 4 5 6
+    filters.js +        1 2 3 4 5
+    api.js +            1 2 3 4 5 6 7 8
+    charts.js +         1 2 3 4 5 6
+    ui.js +             1 2 3 4 5 6
+    landing.js +        1 2 3 4 5
+    app.js +            1 2 3 4 5 6 7 8
+  docs/
+    README.txt
