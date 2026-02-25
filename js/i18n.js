@@ -24,6 +24,7 @@
       menu: "Menu",
 
       exportCsv: "Export CSV",
+      exportPdf: "Export PDF",
 
       accessibility: "Accessibility",
       biggerText: "Bigger text",
@@ -136,6 +137,8 @@
       msgPossibleDup: "This looks like a duplicate. Add anyway?",
       msgCsvEmpty: "Nothing to export.",
       msgCsvOk: "CSV exported.",
+      msgPdfEmpty: "Nothing to export.",
+      msgPdfOk: "PDF ready.",
       msgThemeDark: "Dark mode",
       msgThemeLight: "Light mode",
 
@@ -158,7 +161,32 @@
       errAmountMax: "Amount is too large.",
       errFutureDate: "Future dates are not allowed.",
       errDecimals: "Max 2 decimal places allowed.",
-      errDescLen: "Description too long (max 60)."
+      errDescLen: "Description too long (max 60).",
+
+      /* ✅ Added for new UI */
+      filtersOpen: "Filters",
+      applyFilters: "Apply",
+
+      badgeExceeded: "Exceeded",
+      badgeNearBudget: "Near budget",
+      badgeWithinBudget: "Within budget",
+      metaDaysSoFar: "days",
+      metaIfPaceContinues: "If pace continues",
+      metaBudgetMinusExpected: "Budget minus expected",
+      metaSetBudgetToCompare: "Set budget to compare",
+      footerLikelyWithin: "Likely within budget by",
+      footerLikelyExceed: "Likely exceed budget by",
+      predictionSub: "Clear numbers that show where your month is heading.",
+
+      /* ✅ CSV column headers (no "csv" prefix) */
+      colDate: "Date",
+      colAmount: "Amount",
+      colCurrency: "Currency",
+      colCategory: "Category",
+      colPayment: "Payment",
+      colDescription: "Description",
+      pdfTotal: "Total amount",
+      pdfCurrencyType: "Currency"
     },
 
     ar: {
@@ -182,6 +210,7 @@
       menu: "القائمة",
 
       exportCsv: "تصدير CSV",
+      exportPdf: "تصدير PDF",
 
       accessibility: "إمكانية الوصول",
       biggerText: "تكبير الخط",
@@ -294,6 +323,8 @@
       msgPossibleDup: "يبدو أنه مصروف مكرر. هل تريد الإضافة؟",
       msgCsvEmpty: "لا يوجد شيء للتصدير.",
       msgCsvOk: "تم تصدير CSV.",
+      msgPdfEmpty: "لا يوجد شيء للتصدير.",
+      msgPdfOk: "ملف PDF جاهز.",
       msgThemeDark: "الوضع الداكن",
       msgThemeLight: "الوضع الفاتح",
 
@@ -316,7 +347,32 @@
       errAmountMax: "المبلغ كبير جدًا.",
       errFutureDate: "لا يسمح بتاريخ في المستقبل.",
       errDecimals: "يسمح فقط حتى منزلتين عشريتين.",
-      errDescLen: "الوصف طويل (الحد 60)."
+      errDescLen: "الوصف طويل (الحد 60).",
+
+      /* ✅ Added for new UI */
+      filtersOpen: "مسنّدات",
+      applyFilters: "تم",
+
+      badgeExceeded: "تجاوز",
+      badgeNearBudget: "قريب من الميزانية",
+      badgeWithinBudget: "ضمن الميزانية",
+      metaDaysSoFar: "يوم",
+      metaIfPaceContinues: "إذا استمر نفس المعدّل",
+      metaBudgetMinusExpected: "الميزانية ناقص المتوقع",
+      metaSetBudgetToCompare: "حدد ميزانية لتفعيل المقارنة",
+      footerLikelyWithin: "متوقع تضل ضمن الميزانية وتوفّر تقريبًا",
+      footerLikelyExceed: "متوقع تتجاوز الميزانية تقريبًا بـ",
+      predictionSub: "أرقام واضحة تساعدك تعرف وين رايح الشهر.",
+
+      /* ✅ CSV column headers (no "csv" prefix) */
+      colDate: "التاريخ",
+      colAmount: "المبلغ",
+      colCurrency: "العملة",
+      colCategory: "الفئة",
+      colPayment: "الدفع",
+      colDescription: "الوصف",
+      pdfTotal: "مجموع المبالغ",
+      pdfCurrencyType: "حسب نوع العملة"
     },
 
     he: {
@@ -340,6 +396,7 @@
       menu: "תפריט",
 
       exportCsv: "ייצוא CSV",
+      exportPdf: "ייצוא PDF",
 
       accessibility: "נגישות",
       biggerText: "הגדלת טקסט",
@@ -452,6 +509,8 @@
       msgPossibleDup: "נראה שזו הוצאה כפולה. להוסיף בכל זאת?",
       msgCsvEmpty: "אין מה לייצא.",
       msgCsvOk: "CSV ייוצא.",
+      msgPdfEmpty: "אין מה לייצא.",
+      msgPdfOk: "PDF מוכן.",
       msgThemeDark: "מצב כהה",
       msgThemeLight: "מצב בהיר",
 
@@ -474,7 +533,32 @@
       errAmountMax: "הסכום גדול מדי.",
       errFutureDate: "אין לאפשר תאריך עתידי.",
       errDecimals: "מקסימום 2 ספרות אחרי הנקודה.",
-      errDescLen: "התיאור ארוך מדי (מקסימום 60)."
+      errDescLen: "התיאור ארוך מדי (מקסימום 60).",
+
+      /* ✅ Added for new UI */
+      filtersOpen: "מסננים",
+      applyFilters: "סיום",
+
+      badgeExceeded: "חריגה",
+      badgeNearBudget: "קרוב לתקציב",
+      badgeWithinBudget: "בתוך התקציב",
+      metaDaysSoFar: "ימים",
+      metaIfPaceContinues: "אם הקצב נמשך",
+      metaBudgetMinusExpected: "תקציב פחות צפוי",
+      metaSetBudgetToCompare: "הגדר תקציב להשוואה",
+      footerLikelyWithin: "כנראה בתוך התקציב בערך",
+      footerLikelyExceed: "כנראה חריגה מהתקציב בערך",
+      predictionSub: "מספרים ברורים שמראים לאן החודש הולך.",
+
+      /* ✅ CSV column headers (no "csv" prefix) */
+      colDate: "תאריך",
+      colAmount: "סכום",
+      colCurrency: "מטבע",
+      colCategory: "קטגוריה",
+      colPayment: "תשלום",
+      colDescription: "תיאור",
+      pdfTotal: "סה״כ סכומים",
+      pdfCurrencyType: "לפי סוג מטבע"
     }
   };
 
