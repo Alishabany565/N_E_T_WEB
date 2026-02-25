@@ -1,3 +1,4 @@
+<!-- app.html -->
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -10,14 +11,13 @@
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
-  <button id="a11yFab" class="a11y-fab" type="button" aria-label="Accessibility" aria-expanded="false" aria-controls="a11yPanel" title="Accessibility">
-    <span aria-hidden="true">♿</span>
-  </button>
+  <button id="a11yFab" class="a11y-fab" type="button" aria-label="Accessibility"
+          aria-expanded="false" aria-controls="a11yPanel">♿</button>
 
-  <div id="a11yPanel" class="a11y-panel" role="dialog" aria-modal="true" aria-labelledby="a11yPanelTitle" hidden>
+  <div id="a11yPanel" class="a11y-panel" hidden>
     <div class="a11y-panel-head">
-      <h3 id="a11yPanelTitle" data-i18n="accessibility">Accessibility</h3>
-      <button id="a11yClose" class="a11y-close" type="button" aria-label="Close">✕</button>
+      <h3 data-i18n="accessibility">Accessibility</h3>
+      <button id="a11yClose" class="a11y-close" type="button">✕</button>
     </div>
     <div class="a11y-panel-body">
       <button class="a11y-opt" type="button" data-a11y="bigtext" data-i18n="biggerText">Bigger text</button>
@@ -27,9 +27,9 @@
     </div>
   </div>
 
-  <header class="topbar" role="banner">
-    <div class="brand" aria-label="Brand">
-      <span class="logo" aria-hidden="true">◎</span>
+  <header class="topbar">
+    <div class="brand" aria-label="Expense Tracker">
+      <div class="logo" aria-hidden="true">💸</div>
       <div>
         <div class="title" data-i18n="appTitle">Expense Tracker</div>
         <div class="sub" id="helloUser"></div>
@@ -46,67 +46,111 @@
 
       <button id="themeToggle" class="icon-btn" type="button" aria-label="Theme" title="Theme">
         <span aria-hidden="true">☾</span>
-        <span class="sr-only" data-i18n="theme">Theme</span>
       </button>
 
-      <button id="menuBtn" class="icon-btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="userMenu" title="Menu">
-        <span aria-hidden="true">☰</span>
-        <span class="sr-only" data-i18n="menu">Menu</span>
-      </button>
+      <button id="menuBtn" class="icon-btn" type="button" aria-haspopup="true" aria-expanded="false"
+              aria-controls="userMenu" data-i18n="menu">Menu</button>
 
-      <div id="userMenu" class="menu" role="menu" hidden>
-        <button class="menu-item" role="menuitem" id="btnPersonal" data-i18n="personalDetails">Personal Details</button>
-        <button class="menu-item" role="menuitem" id="btnShortcuts" data-i18n="shortcutsTitle">Keyboard shortcuts</button>
-        <button class="menu-item" role="menuitem" id="btnReset" data-i18n="deleteAll">Delete All Data</button>
-        <div class="menu-sep" role="separator"></div>
-        <button class="menu-item" role="menuitem" id="btnLogout" data-i18n="logout">Logout</button>
+      <div id="userMenu" class="menu" hidden role="menu" aria-label="User menu">
+        <button id="btnPersonal" class="menu-item" type="button" role="menuitem" data-i18n="personalDetails">Personal Details</button>
+        <button id="btnShortcuts" class="menu-item" type="button" role="menuitem" data-i18n="shortcutsTitle">Keyboard shortcuts</button>
+        <div class="menu-sep" aria-hidden="true"></div>
+        <button id="btnReset" class="menu-item" type="button" role="menuitem" data-i18n="deleteAll">Delete All Data</button>
+        <button id="btnLogout" class="menu-item" type="button" role="menuitem" data-i18n="logout">Logout</button>
       </div>
     </div>
   </header>
 
-  <main id="main" class="container" role="main">
-    <section class="card" aria-label="Add expense">
-      <div class="card-head">
-        <h2 data-i18n="quickAddTitle">Add expense</h2>
-        <div class="tabs" role="tablist" aria-label="Views">
-          <button class="tab" id="tabList" role="tab" aria-selected="true" aria-controls="panelList" data-i18n="tabList">List</button>
-          <button class="tab" id="tabInsights" role="tab" aria-selected="false" aria-controls="panelInsights" data-i18n="tabInsights">Insights</button>
+  <main id="main" class="container">
+    <!-- Top row: Budget (right in Arabic) + Insights summary (left) -->
+    <div class="top-row">
+      <section class="card insights-card" aria-label="Insights summary">
+        <div class="insight-box">
+          <div id="predictionBox">—</div>
         </div>
+
+        <div class="insight-box" style="margin-top:14px;">
+          <div id="smartInsightsBox">—</div>
+        </div>
+      </section>
+
+      <section class="card budget-card" aria-labelledby="budgetTitle">
+        <h2 id="budgetTitle" data-i18n="budgetTitle">Monthly Budget</h2>
+        <div class="row" style="margin-top:6px;">
+          <input id="budget" class="input" placeholder="e.g. 2000" data-i18n-ph="budgetPH" />
+          <button id="btnSaveBudget" class="btn primary" type="button" data-i18n="saveBudget">Save Budget</button>
+        </div>
+
+        <div id="budgetStatus" class="status" style="margin-top:10px;"></div>
+
+        <div class="progress-wrap">
+          <div class="progress-head">
+            <span class="hint" id="budgetPctLabel">—</span>
+            <span class="hint" id="budgetProgressHint"></span>
+          </div>
+          <div class="progress" aria-label="Budget progress">
+            <div id="budgetBar" class="progress-bar"></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px;">
+          <h2 data-i18n="currencyTitle">Currency & Conversion (External API)</h2>
+
+          <div class="currency-ui">
+            <div class="currency-top">
+              <div class="hint" data-i18n="showIn">Show amounts in:</div>
+              <div class="currency-actions">
+                <button id="btnRefreshRates" class="btn" type="button" data-i18n="refreshRates">Refresh rates</button>
+              </div>
+            </div>
+
+            <div id="currencyTiles" class="currency-tiles" role="radiogroup" aria-label="Currency"></div>
+
+            <!-- keep native select for accessibility/fallback (visually hidden) -->
+            <label class="sr-only" for="currency" data-i18n="showIn">Show amounts in:</label>
+            <select id="currency" class="select sr-only" aria-label="Currency">
+              <option value="ILS">ILS</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="JOD">JOD</option>
+            </select>
+          </div>
+
+          <div class="hint" id="rateInfo" style="margin-top:8px;"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Add expense (below top row) -->
+    <section class="card" style="margin-top:16px;" aria-labelledby="addTitle">
+      <div class="card-head">
+        <h2 id="addTitle" data-i18n="quickAddTitle">Add expense</h2>
+        <div class="hint" id="lockHint"></div>
       </div>
 
-      <div class="row" style="margin-bottom:12px">
-        <label for="monthSelect" data-i18n="month">Month:</label>
-        <select id="monthSelect" class="select" aria-label="Month"></select>
-        <span id="lockHint" class="hint" aria-live="polite"></span>
+      <div class="row" style="margin-bottom:12px;">
+        <label for="monthSelect" class="hint" data-i18n="month">Month:</label>
+        <select id="monthSelect" class="select"></select>
       </div>
 
       <form id="expenseForm" novalidate>
-        <input type="hidden" id="expenseId" />
+        <input id="expenseId" type="hidden"/>
 
         <div class="form-grid">
           <label class="field">
             <span data-i18n="amount">Amount</span>
-            <input id="amount" type="number" step="0.01" inputmode="decimal" required />
+            <input id="amount" class="input" inputmode="decimal" autocomplete="off"/>
           </label>
 
           <label class="field">
-            <span data-i18n="category">Category</span>
-            <select id="category" required>
-              <option value="" data-i18n="choose">Choose...</option>
-              <option value="clothes" data-i18n="catClothes">Clothes</option>
-              <option value="food" data-i18n="catFood">Food</option>
-              <option value="fuel" data-i18n="catFuel">Fuel</option>
-              <option value="bills" data-i18n="catBills">Bills</option>
-              <option value="entertainment" data-i18n="catEntertainment">Entertainment</option>
-              <option value="health" data-i18n="catHealth">Health</option>
-              <option value="education" data-i18n="catEducation">Education</option>
-              <option value="other" data-i18n="catOther">Other</option>
-            </select>
+            <span data-i18n="date">Date</span>
+            <input id="date" class="input" type="date"/>
           </label>
 
           <label class="field">
             <span data-i18n="payType">Payment Type</span>
-            <select id="paymentType" required>
+            <select id="paymentType" class="select">
               <option value="" data-i18n="choose">Choose...</option>
               <option value="cash" data-i18n="payCash">Cash</option>
               <option value="credit" data-i18n="payCredit">Credit</option>
@@ -115,133 +159,70 @@
           </label>
 
           <label class="field">
-            <span data-i18n="date">Date</span>
-            <input id="date" type="date" required />
-          </label>
-
-          <label class="field" style="grid-column:1/-1">
-            <span data-i18n="descOpt">Description (optional)</span>
-            <input id="description" type="text" maxlength="60" />
+            <span data-i18n="category">Category</span>
+            <select id="category" class="select">
+              <option value="" data-i18n="choose">Choose...</option>
+              <option value="clothes" data-i18n="catClothes">Clothes</option>
+              <option value="entertainment" data-i18n="catEntertainment">Entertainment</option>
+              <option value="fuel" data-i18n="catFuel">Fuel</option>
+              <option value="food" data-i18n="catFood">Food</option>
+              <option value="bills" data-i18n="catBills">Bills</option>
+              <option value="health" data-i18n="catHealth">Health</option>
+              <option value="education" data-i18n="catEducation">Education</option>
+              <option value="other" data-i18n="catOther">Other</option>
+            </select>
           </label>
         </div>
+
+        <label class="field" style="margin-top:12px;">
+          <span data-i18n="descOpt">Description (optional)</span>
+          <input id="description" class="input" maxlength="60" autocomplete="off"/>
+        </label>
 
         <div class="form-actions">
-          <button type="submit" class="btn primary" data-i18n="save">Save</button>
-          <button type="button" class="btn" id="btnCancelEdit" hidden data-i18n="cancelEdit">Cancel Edit</button>
+          <button class="btn primary" type="submit" data-i18n="save">Save</button>
+          <button id="btnCancelEdit" class="btn" type="button" data-i18n="cancelEdit" hidden>Cancel Edit</button>
         </div>
 
-        <div id="formErrors" class="errors" aria-live="polite"></div>
+        <div id="formErrors" class="errors" role="alert" aria-live="polite"></div>
       </form>
     </section>
 
-    <section id="panelList" class="panel" role="tabpanel" aria-labelledby="tabList">
-      <section class="card" aria-label="Summary">
-        <div class="summary">
-          <div class="pill"><span data-i18n="count">Count</span>: <span id="count">0</span></div>
-          <div class="pill"><span data-i18n="monthSpent">Spent</span>: <span id="monthTotal">0</span></div>
-          <div class="pill"><span data-i18n="monthRemaining">Remaining</span>: <span id="monthRemaining">0</span></div>
-          <div class="pill"><span data-i18n="displayTotal">In currency</span>: <span id="displayTotal">0</span></div>
+    <!-- ✅ LIST BLOCK (separate, modern) -->
+    <section class="card list-card" style="margin-top:16px;" aria-labelledby="listHeading">
+      <div class="block-head">
+        <div class="block-title">
+          <h2 id="listHeading" class="h2" data-i18n="listTitle">Expenses</h2>
+          <div class="hint" data-i18n="listHint">Manage your expenses and export reports.</div>
         </div>
 
-        <div class="toolbar">
+        <div class="block-actions">
+          <button id="btnExportPdf" class="btn" type="button" data-i18n="exportPdf">Export PDF</button>
+          <button id="btnExportCsv" class="btn" type="button" data-i18n="exportCsv">Export CSV</button>
+          <button id="btnOpenFilters" class="btn" type="button" data-i18n="filtersOpen"
+                  aria-haspopup="dialog" aria-expanded="false">Filters</button>
+        </div>
+      </div>
+
+      <div class="list-toolbar">
+        <div class="search-wrap">
           <label class="sr-only" for="search" data-i18n="search">Search</label>
-          <input id="search" class="input" type="text" data-i18n-ph="searchPH" placeholder="Search..." />
-
-          <details class="details compact" id="filtersDetails">
-            <summary data-i18n="filters">Filters</summary>
-            <div class="details-body">
-              <div class="filters">
-                <label class="field">
-                  <span data-i18n="payType">Payment Type</span>
-                  <select id="filterPayment">
-                    <option value="all" data-i18n="allPay">All payment types</option>
-                    <option value="cash" data-i18n="payCash">Cash</option>
-                    <option value="credit" data-i18n="payCredit">Credit</option>
-                    <option value="check" data-i18n="payCheck">Check</option>
-                  </select>
-                </label>
-
-                <label class="field">
-                  <span data-i18n="category">Category</span>
-                  <select id="filterCategory">
-                    <option value="all" data-i18n="allCat">All categories</option>
-                    <option value="clothes" data-i18n="catClothes">Clothes</option>
-                    <option value="food" data-i18n="catFood">Food</option>
-                    <option value="fuel" data-i18n="catFuel">Fuel</option>
-                    <option value="bills" data-i18n="catBills">Bills</option>
-                    <option value="entertainment" data-i18n="catEntertainment">Entertainment</option>
-                    <option value="health" data-i18n="catHealth">Health</option>
-                    <option value="education" data-i18n="catEducation">Education</option>
-                    <option value="other" data-i18n="catOther">Other</option>
-                  </select>
-                </label>
-
-                <div class="range">
-                  <label class="field">
-                    <span data-i18n="from">From</span>
-                    <input id="fromDate" type="date" />
-                  </label>
-                  <label class="field">
-                    <span data-i18n="to">To</span>
-                    <input id="toDate" type="date" />
-                  </label>
-                </div>
-
-                <label class="field">
-                  <span data-i18n="sort">Sort</span>
-                  <select id="sortBy">
-                    <option value="date_desc" data-i18n="sortNew">Newest first</option>
-                    <option value="date_asc" data-i18n="sortOld">Oldest first</option>
-                    <option value="amount_desc" data-i18n="sortHigh">Highest amount</option>
-                    <option value="amount_asc" data-i18n="sortLow">Lowest amount</option>
-                  </select>
-                </label>
-
-                <button id="btnClearFilters" class="btn" type="button" data-i18n="clearFilters">Clear filters</button>
-                <button id="btnExportCsv" class="btn" type="button" data-i18n="exportCsv">Export CSV</button>
-              </div>
-            </div>
-          </details>
+          <input id="search" class="input" data-i18n-ph="searchPH" placeholder="Search by description..." />
         </div>
-      </section>
 
-      <section class="card" aria-label="Budget and prediction">
-        <div class="grid2">
-          <div>
-            <h2 data-i18n="budgetTitle">Monthly Budget</h2>
-            <div class="row">
-              <label class="sr-only" for="budget" data-i18n="budgetTitle">Monthly Budget</label>
-              <input id="budget" class="input" type="number" step="0.01" data-i18n-ph="budgetPH" placeholder="e.g. 2000" />
-              <button id="btnSaveBudget" class="btn" type="button" data-i18n="saveBudget">Save Budget</button>
-            </div>
-            <div id="budgetStatus" class="status" aria-live="polite"></div>
-
-            <div class="progress-wrap" aria-label="Budget progress">
-              <div class="progress-head">
-                <span class="hint" id="budgetPctLabel">0%</span>
-              </div>
-              <div class="progress" aria-hidden="true">
-                <div id="budgetBar" class="progress-bar" style="width:0%"></div>
-              </div>
-              <div class="hint" id="budgetProgressHint" aria-live="polite"></div>
-            </div>
-          </div>
-
-          <div>
-            <h2 data-i18n="predictionTitle">End-of-month prediction</h2>
-            <div class="status" id="predictionBox" aria-live="polite"></div>
-
-            <h2 style="margin-top:14px" data-i18n="smartInsightsTitle">Smart insights</h2>
-            <div class="status" id="smartInsightsBox" aria-live="polite"></div>
-          </div>
+        <div class="summary summary-modern" aria-label="Summary">
+          <div class="pill"><span data-i18n="count">Count</span>: <b id="count">0</b></div>
+          <div class="pill"><span data-i18n="monthSpent">Spent</span>: <b id="monthTotal">—</b></div>
+          <div class="pill"><span data-i18n="monthRemaining">Remaining</span>: <b id="monthRemaining">—</b></div>
+          <div class="pill"><span data-i18n="displayTotal">In currency</span>: <b id="displayTotal">—</b></div>
         </div>
-      </section>
+      </div>
 
-      <section class="card" aria-label="Expenses list">
-        <h2 data-i18n="listTitle">Expenses</h2>
+      <div id="panelList" class="panel">
+        <div id="emptyState" class="empty" hidden data-i18n="emptyState">No expenses yet. Add your first one.</div>
 
-        <div class="table-wrap" role="region" aria-label="Expenses table">
-          <table class="table">
+        <div class="table-wrap table-modern">
+          <table class="table" aria-label="Expenses table">
             <thead>
               <tr>
                 <th data-i18n="thDate">Date</th>
@@ -255,69 +236,125 @@
             <tbody id="expensesBody"></tbody>
           </table>
         </div>
-
-        <div id="emptyState" class="empty" hidden data-i18n="emptyState">No expenses yet.</div>
-      </section>
+      </div>
     </section>
 
-    <section id="panelInsights" class="panel" role="tabpanel" aria-labelledby="tabInsights" hidden>
-      <section class="grid">
-        <div class="card">
-          <h2 data-i18n="currencyTitle">Currency & Conversion (External API)</h2>
-          <div class="row">
-            <label for="currency" data-i18n="showIn">Show amounts in:</label>
-            <select id="currency">
-              <option value="ILS">ILS ₪</option>
-              <option value="USD">USD $</option>
-              <option value="EUR">EUR €</option>
-              <option value="GBP">GBP £</option>
-            </select>
-            <button id="btnRefreshRates" class="btn" type="button" data-i18n="refreshRates">Refresh rates</button>
-          </div>
-          <div id="rateInfo" class="hint" aria-live="polite"></div>
+    <!-- ✅ INSIGHTS BLOCK (separate) -->
+    <section class="card insights-full" style="margin-top:16px;" aria-labelledby="insightsHeading">
+      <div class="block-head">
+        <div class="block-title">
+          <h2 id="insightsHeading" class="h2" data-i18n="tabInsights">Insights</h2>
+          <div class="hint" data-i18n="insightsHint">Charts that summarize your spending.</div>
         </div>
-      </section>
-
-      <section class="grid" aria-label="Charts">
-        <div class="card">
-          <h2 data-i18n="chartCat">Chart: by Category</h2>
-          <canvas id="chartCategory" height="240"></canvas>
-        </div>
-        <div class="card">
-          <h2 data-i18n="chartPay">Chart: by Payment Type</h2>
-          <canvas id="chartPayment" height="240"></canvas>
-        </div>
-      </section>
-    </section>
-  </main>
-
-  <div class="modal" id="shortcutsModal" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle" hidden>
-    <div class="modal-card">
-      <div class="modal-head">
-        <h3 id="shortcutsTitle" data-i18n="shortcutsTitle">Keyboard shortcuts</h3>
-        <button class="icon-btn" id="shortcutsClose" type="button" aria-label="Close">✕</button>
       </div>
 
-      <ul class="shortcuts" aria-label="Shortcuts">
-        <li><kbd>Ctrl</kbd> + <kbd>N</kbd> — <span data-i18n="scNew">New expense</span></li>
-        <li><kbd>Ctrl</kbd> + <kbd>F</kbd> — <span data-i18n="scSearch">Focus search</span></li>
-        <li><kbd>Alt</kbd> + <kbd>I</kbd> — <span data-i18n="scInsights">Go to Insights</span></li>
-        <li><kbd>Alt</kbd> + <kbd>L</kbd> — <span data-i18n="scList">Go to List</span></li>
-      </ul>
+      <div id="panelInsights" class="panel">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3 class="h3" data-i18n="chartCat">Chart: by Category</h3>
+            <canvas id="chartCategory" height="240"></canvas>
+          </div>
+
+          <div class="chart-card">
+            <h3 class="h3" data-i18n="chartPay">Chart: by Payment Type</h3>
+            <canvas id="chartPayment" height="240"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters Modal -->
+    <div id="filtersModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Filters">
+      <div class="modal-card modal-filters">
+        <div class="modal-head">
+          <h2 data-i18n="filters">Filters</h2>
+          <button id="filtersClose" class="icon-btn" type="button" aria-label="Close">✕</button>
+        </div>
+
+        <div class="filters-form">
+          <label class="field">
+            <span data-i18n="payType">Payment Type</span>
+            <select id="filterPayment" class="select">
+              <option value="all" data-i18n="allPay">All payment types</option>
+              <option value="cash" data-i18n="payCash">Cash</option>
+              <option value="credit" data-i18n="payCredit">Credit</option>
+              <option value="check" data-i18n="payCheck">Check</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span data-i18n="category">Category</span>
+            <select id="filterCategory" class="select">
+              <option value="all" data-i18n="allCat">All categories</option>
+              <option value="clothes" data-i18n="catClothes">Clothes</option>
+              <option value="entertainment" data-i18n="catEntertainment">Entertainment</option>
+              <option value="fuel" data-i18n="catFuel">Fuel</option>
+              <option value="food" data-i18n="catFood">Food</option>
+              <option value="bills" data-i18n="catBills">Bills</option>
+              <option value="health" data-i18n="catHealth">Health</option>
+              <option value="education" data-i18n="catEducation">Education</option>
+              <option value="other" data-i18n="catOther">Other</option>
+            </select>
+          </label>
+
+          <div class="range">
+            <label class="field">
+              <span data-i18n="from">From</span>
+              <input id="fromDate" type="date" class="input"/>
+            </label>
+            <label class="field">
+              <span data-i18n="to">To</span>
+              <input id="toDate" type="date" class="input"/>
+            </label>
+          </div>
+
+          <label class="field">
+            <span data-i18n="sort">Sort</span>
+            <select id="sortBy" class="select">
+              <option value="date_desc" data-i18n="sortNew">Newest first</option>
+              <option value="date_asc" data-i18n="sortOld">Oldest first</option>
+              <option value="amount_desc" data-i18n="sortHigh">Highest amount</option>
+              <option value="amount_asc" data-i18n="sortLow">Lowest amount</option>
+            </select>
+          </label>
+
+          <div class="modal-actions">
+            <button id="btnResetFilters" class="btn" type="button" data-i18n="clearFilters">Clear filters</button>
+            <button id="btnApplyFilters" class="btn primary" type="button" data-i18n="applyFilters">Apply</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Shortcuts Modal -->
+    <div id="shortcutsModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Shortcuts">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h2 data-i18n="shortcutsTitle">Keyboard shortcuts</h2>
+          <button id="shortcutsClose" class="icon-btn" type="button" aria-label="Close">✕</button>
+        </div>
+        <ul class="shortcuts">
+          <li><kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>F</kbd> — <span data-i18n="scSearch">Focus search</span></li>
+          <li><kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>N</kbd> — <span data-i18n="scNew">New expense</span></li>
+          <li><kbd>Alt</kbd> + <kbd>I</kbd> — <span data-i18n="scInsights">Go to Insights</span></li>
+          <li><kbd>Alt</kbd>/<kbd>⌥</kbd> + <kbd>L</kbd> — <span data-i18n="scList">Go to List</span></li>
+        </ul>
+      </div>
+    </div>
+  </main>
 
-  <script src="js/i18n.js"></script>
   <script src="js/a11y.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/storage.js"></script>
-  <script src="js/validation.js"></script>
-  <script src="js/filters.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/charts.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/validation.js"></script>
   <script src="js/ui.js"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/charts.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
