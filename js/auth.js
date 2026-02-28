@@ -36,7 +36,8 @@
     const user = { id: crypto.randomUUID(), fullName, email, passHash, createdAt: Date.now() };
     users.push(user);
     saveUsers(users);
-    setSession({ userId: user.id, fullName: user.fullName, email: user.email });
+    const displayName = String(user.fullName || "").trim() || String(user.email || "").split("@")[0] || "";
+    setSession({ userId: user.id, fullName: user.fullName, email: user.email, displayName });
     return user;
   }
 
@@ -46,7 +47,8 @@
     if (!u) throw new Error("INVALID");
     const passHash = await hashPassword(password);
     if (passHash !== u.passHash) throw new Error("INVALID");
-    setSession({ userId: u.id, fullName: u.fullName, email: u.email });
+    const displayName = String(u.fullName || "").trim() || String(u.email || "").split("@")[0] || "";
+    setSession({ userId: u.id, fullName: u.fullName, email: u.email, displayName });
     return u;
   }
 

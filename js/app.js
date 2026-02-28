@@ -221,6 +221,19 @@
     return Number.isFinite(n) ? n : NaN;
   }
 
+  function getSessionDisplayName(){
+    const direct = String(session?.displayName || "").trim();
+    if (direct) return direct.split(/\s+/)[0];
+
+    const fullName = String(session?.fullName || "").trim();
+    if (fullName) return fullName.split(/\s+/)[0];
+
+    const email = String(session?.email || "").trim();
+    if (email) return email.split("@")[0];
+
+    return "";
+  }
+
   function initWelcomeCard(){
     const welcomeTitleEl = document.getElementById("welcomeTitle");
     const welcomeSubEl = document.getElementById("welcomeSub");
@@ -237,15 +250,7 @@
       year: "numeric"
     }).format(new Date());
 
-    const fullName = String(session?.fullName || "").trim();
-    const email = String(session?.email || "").trim();
-    let displayName = "";
-
-    if (fullName){
-      displayName = fullName.split(/\s+/)[0];
-    } else if (email){
-      displayName = email.split("@")[0];
-    }
+    const displayName = getSessionDisplayName();
 
     welcomeTitleEl.textContent = displayName
       ? I18N.t("welcomeTitleNamed").replace("{name}", displayName)
@@ -389,18 +394,18 @@
     const absDiff = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(Math.abs(diff));
 
     if (diff > 0){
-      compareEl.textContent = `+${absDiff} (â†‘ ${pct}%)`;
+      compareEl.textContent = `+${absDiff} (↑ ${pct}%)`;
       compareEl.classList.add("compare-up");
       return;
     }
 
     if (diff < 0){
-      compareEl.textContent = `-${absDiff} (â†“ ${pct}%)`;
+      compareEl.textContent = `-${absDiff} (↓ ${pct}%)`;
       compareEl.classList.add("compare-down");
       return;
     }
 
-    compareEl.textContent = "0 (â†’ 0%)";
+    compareEl.textContent = "0 (→ 0%)";
     compareEl.classList.add("compare-flat");
   }
 
@@ -547,7 +552,7 @@
   }
 
   if (helloUser){
-    const name = session.fullName || session.email || "";
+    const name = session.displayName || session.fullName || session.email || "";
     helloUser.textContent = name ? name : "";
   }
 
@@ -1530,6 +1535,7 @@
 
   function render(){
     I18N.applyLang();
+    initWelcomeCard();
     renderCurrencyTiles();
     buildMonthOptions();
     applyLockUI();
