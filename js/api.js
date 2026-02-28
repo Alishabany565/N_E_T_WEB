@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   async function fetchRates(baseCurrency){
     const base = baseCurrency || "ILS";
     const url = `https://open.er-api.com/v6/latest/${encodeURIComponent(base)}`;
@@ -20,5 +20,28 @@
     return amount * rate;
   }
 
-  window.ApiService = { fetchRates, convertAmount };
+  function fetchFinancialQuote(){
+    const url = `https://api.adviceslip.com/advice?ts=${Date.now()}`;
+    return fetch(url, { cache: "no-store" })
+      .then(res => {
+        if (!res.ok) throw new Error("QUOTE_FETCH_FAIL");
+        return res.json();
+      })
+      .then(data => ({
+        content: data?.slip?.advice || (window.I18N?.t ? I18N.t("quoteFallbackText") : "Track your expenses wisely."),
+        author: "AdviceSlip"
+      }))
+      .catch(err => {
+        console.error("Quote API error:", err);
+        const fallbackContent = window.I18N?.t ? I18N.t("quoteFallbackText") : "Track your expenses wisely.";
+        const fallbackAuthor = "AdviceSlip";
+        return {
+          content: fallbackContent,
+          author: fallbackAuthor
+        };
+      });
+  }
+
+  window.fetchFinancialQuote = fetchFinancialQuote;
+  window.ApiService = { fetchRates, convertAmount, fetchFinancialQuote };
 })();

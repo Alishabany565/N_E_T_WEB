@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   function fmtMoney(v, currency){
     const n = Number(v) || 0;
     const locale = document.documentElement.lang || "en";
@@ -19,6 +19,7 @@
   }
 
   function showErrors(el, errorKeys){
+    if (!el) return;
     if (!errorKeys || !errorKeys.length){
       el.style.display = "none";
       el.innerHTML = "";
@@ -51,9 +52,10 @@
   }
 
   function renderTable(tbody, list, currency, onEdit, onDelete, ratesObj, locked){
+    if (!tbody) return;
     tbody.innerHTML = "";
 
-    for (const e of list){
+    for (const e of (list || [])){
       const tr = document.createElement("tr");
 
       const amountConverted = ratesObj ? ApiService.convertAmount(e.amount, ratesObj, currency) : e.amount;
@@ -96,12 +98,12 @@
 
   function budgetMessage(total, budget){
     if (!budget || budget <= 0){
-      return I18N.getLang() === "he" ? "לא הוגדר תקציב." : (I18N.getLang() === "ar" ? "لم يتم تحديد ميزانية." : "No budget set.");
+      return I18N.t("budgetNotSet");
     }
     const pct = (total / budget) * 100;
     if (pct < 80) return `${pct.toFixed(0)}%`;
-    if (pct < 100) return `${pct.toFixed(0)}% • ${I18N.getLang() === "he" ? "מתקרב לתקציב" : (I18N.getLang() === "ar" ? "قريب من الميزانية" : "Near budget")}`;
-    return `${pct.toFixed(0)}% • ${I18N.getLang() === "he" ? "חריגה" : (I18N.getLang() === "ar" ? "تجاوز" : "Exceeded")}`;
+    if (pct < 100) return `${pct.toFixed(0)}% - ${I18N.t("badgeNearBudget")}`;
+    return `${pct.toFixed(0)}% - ${I18N.t("badgeExceeded")}`;
   }
 
   window.UIService = {
