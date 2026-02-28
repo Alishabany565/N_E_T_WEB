@@ -1595,3 +1595,35 @@
     startApp();
   }
 })();
+
+function initTabs(){
+  const tabList = document.getElementById("tabList");
+  const tabInsights = document.getElementById("tabInsights");
+  const panelList = document.getElementById("panelList");
+  const panelInsights = document.getElementById("panelInsights");
+
+  if(!tabList || !tabInsights || !panelList || !panelInsights){
+    console.warn("Tabs missing");
+    return;
+  }
+
+  function show(which){
+    const isList = which === "list";
+
+    panelList.hidden = !isList;
+    panelInsights.hidden = isList;
+
+    tabList.classList.toggle("is-active", isList);
+    tabInsights.classList.toggle("is-active", !isList);
+
+    tabList.setAttribute("aria-selected", isList);
+    tabInsights.setAttribute("aria-selected", !isList);
+  }
+
+  tabList.addEventListener("click", () => show("list"));
+  tabInsights.addEventListener("click", () => show("insights"));
+
+  show("list");
+}
+
+document.addEventListener("DOMContentLoaded", initTabs);

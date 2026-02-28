@@ -493,24 +493,26 @@ body.a11y-underline .link {
 }
 
 .day-cell.h0 {
-  background: rgba(88, 204, 255, 0.10);
+  background: rgba(76, 255, 170, 0.08);
 }
 
 .day-cell.h1 {
-  background: rgba(88, 204, 255, 0.18);
+  background: rgba(76, 255, 170, 0.18);
 }
 
 .day-cell.h2 {
-  background: rgba(88, 204, 255, 0.28);
+  background: rgba(76, 255, 170, 0.30);
 }
 
 .day-cell.h3 {
-  background: rgba(88, 204, 255, 0.40);
+  background: rgba(76, 255, 170, 0.45);
 }
 
 .day-cell.h4 {
-  background: rgba(88, 204, 255, 0.55);
+  background: rgba(76, 255, 170, 0.65);
 }
+
+
 
 .heatmap-legend {
   display: flex;
@@ -525,25 +527,12 @@ body.a11y-underline .link {
   border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-.legend-box.h0 {
-  background: rgba(88, 204, 255, 0.10);
-}
 
-.legend-box.h1 {
-  background: rgba(88, 204, 255, 0.18);
-}
-
-.legend-box.h2 {
-  background: rgba(88, 204, 255, 0.28);
-}
-
-.legend-box.h3 {
-  background: rgba(88, 204, 255, 0.40);
-}
-
-.legend-box.h4 {
-  background: rgba(88, 204, 255, 0.55);
-}
+.legend-box.h0 { background: rgba(40, 120, 80, 0.10); }
+.legend-box.h1 { background: rgba(40, 160, 95, 0.22); }
+.legend-box.h2 { background: rgba(40, 190, 110, 0.35); }
+.legend-box.h3 { background: rgba(60, 220, 130, 0.50); }
+.legend-box.h4 { background: rgba(90, 255, 160, 0.70); }
 
 .legend-label {
   font-size: 12px;
