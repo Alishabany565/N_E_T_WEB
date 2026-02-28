@@ -569,6 +569,17 @@
   function setLang(lang){
     localStorage.setItem(KEY_LANG, lang);
     applyLang();
+
+    if (typeof fetchFinancialQuote === "function"){
+      const quoteText = document.getElementById("quoteText");
+      const quoteAuthor = document.getElementById("quoteAuthor");
+      if (quoteText && quoteAuthor){
+        fetchFinancialQuote().then((q) => {
+          quoteText.textContent = `"${q.content}"`;
+          quoteAuthor.textContent = "— AdviceSlip";
+        }).catch(() => {});
+      }
+    }
   }
 
   function t(key){
