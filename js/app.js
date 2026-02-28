@@ -1,4 +1,4 @@
-// app.js
+﻿// app.js
 (() => {
   function startApp(){
   if (window.A11Y?.init) A11Y.init();
@@ -18,7 +18,7 @@
     const btn = document.getElementById("themeToggle");
     if (btn){
       const icon = btn.querySelector("span[aria-hidden='true']");
-      if (icon) icon.textContent = (t === "light") ? "☀" : "☾";
+      if (icon) icon.textContent = (t === "light") ? "â˜€" : "â˜¾";
       btn.setAttribute("title", t === "light" ? I18N.t("msgThemeLight") : I18N.t("msgThemeDark"));
     }
   }
@@ -149,13 +149,13 @@
 
     function loadQuote(){
       if (typeof fetchFinancialQuote !== "function"){
-        quoteText.textContent = "\"Track your expenses wisely.\"";
-        quoteAuthor.textContent = "— Smart Coach";
+        quoteText.textContent = `"${I18N.t("quoteFallbackText")}"`;
+        quoteAuthor.textContent = "— AdviceSlip";
         return;
       }
       fetchFinancialQuote().then(q => {
         quoteText.textContent = `"${q.content}"`;
-        quoteAuthor.textContent = `— ${q.author}`;
+        quoteAuthor.textContent = "— AdviceSlip";
       });
     }
 
@@ -243,7 +243,9 @@
       displayName = email.split("@")[0];
     }
 
-    welcomeTitleEl.textContent = displayName ? `Hi, ${displayName} 👋` : "Hi 👋";
+    welcomeTitleEl.textContent = displayName
+      ? I18N.t("welcomeTitleNamed").replace("{name}", displayName)
+      : I18N.t("welcomeTitleGuest");
     welcomeDateEl.textContent = today;
   }
 
@@ -277,8 +279,8 @@
     if (ratio >= 1){
       alertEl.classList.add("alert-high");
       alertIconEl.textContent = "⚠️";
-      alertTitleEl.textContent = "Budget exceeded";
-      alertMsgEl.textContent = "⚠️ You exceeded your budget.";
+      alertTitleEl.textContent = I18N.t("alertBudgetExceededTitle");
+      alertMsgEl.textContent = I18N.t("alertBudgetExceededMsg");
       alertEl.hidden = false;
       return;
     }
@@ -286,8 +288,8 @@
     if (ratio >= 0.85){
       alertEl.classList.add("alert-warn");
       alertIconEl.textContent = "⚠️";
-      alertTitleEl.textContent = "Budget warning";
-      alertMsgEl.textContent = "⚠️ You're close to your budget (85%+).";
+      alertTitleEl.textContent = I18N.t("alertBudgetWarningTitle");
+      alertMsgEl.textContent = I18N.t("alertBudgetWarningMsg");
       alertEl.hidden = false;
       return;
     }
@@ -295,8 +297,8 @@
     if (ratio >= 0.6){
       alertEl.classList.add("alert-mid");
       alertIconEl.textContent = "💡";
-      alertTitleEl.textContent = "Spending insight";
-      alertMsgEl.textContent = "💡 You're past 60% of your budget.";
+      alertTitleEl.textContent = I18N.t("alertSpendingInsightTitle");
+      alertMsgEl.textContent = I18N.t("alertSpendingInsightMsg");
       alertEl.hidden = false;
       return;
     }
@@ -348,7 +350,7 @@
 
     if (!Array.isArray(expenses)){
       warnOnce("monthlyCompareData", "[MonthlyComparison] Expenses data is not an array.");
-      compareEl.textContent = "—";
+      compareEl.textContent = "â€”";
       compareEl.classList.add("compare-flat");
       return;
     }
@@ -383,18 +385,18 @@
     const absDiff = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(Math.abs(diff));
 
     if (diff > 0){
-      compareEl.textContent = `+${absDiff} (↑ ${pct}%)`;
+      compareEl.textContent = `+${absDiff} (â†‘ ${pct}%)`;
       compareEl.classList.add("compare-up");
       return;
     }
 
     if (diff < 0){
-      compareEl.textContent = `-${absDiff} (↓ ${pct}%)`;
+      compareEl.textContent = `-${absDiff} (â†“ ${pct}%)`;
       compareEl.classList.add("compare-down");
       return;
     }
 
-    compareEl.textContent = "0 (→ 0%)";
+    compareEl.textContent = "0 (â†’ 0%)";
     compareEl.classList.add("compare-flat");
   }
 
@@ -520,9 +522,11 @@
 
       const showHint = () => {
         if (dayTotal === 0){
-          hint.textContent = "No spending recorded.";
+          hint.textContent = I18N.t("heatmapNoSpending");
         } else {
-          hint.textContent = `Date: ${dateKey} — Spent: ${dayTotal.toFixed(2)}`;
+          hint.textContent = I18N.t("heatmapDateSpent")
+            .replace("{date}", dateKey)
+            .replace("{amount}", dayTotal.toFixed(2));
         }
       };
 
@@ -772,14 +776,14 @@
   currencySelect?.addEventListener("change", () => setCurrency(currencySelect.value));
 
   function currencyName(code){
-    const lang = I18N.getLang();
-    const names = {
-      en: { ILS:"Shekel", USD:"Dollar", EUR:"Euro", GBP:"Pound", JOD:"Dinar" },
-      ar: { ILS:"شيكل", USD:"دولار", EUR:"يورو", GBP:"جنيه", JOD:"دينار" },
-      he: { ILS:"שקל", USD:"דולר", EUR:"אירו", GBP:"פאונד", JOD:"דינר" }
+    const keyMap = {
+      ILS: "currencyNameILS",
+      USD: "currencyNameUSD",
+      EUR: "currencyNameEUR",
+      GBP: "currencyNameGBP",
+      JOD: "currencyNameJOD"
     };
-    const dict = names[lang] || names.en;
-    return dict[code] || code;
+    return keyMap[code] ? I18N.t(keyMap[code]) : code;
   }
 
   function renderCurrencyTiles(){
@@ -800,7 +804,7 @@
       btn.innerHTML = `
         <div class="currency-code">${code}</div>
         <div class="currency-name">${currencyName(code)}</div>
-        <div class="currency-tag">${I18N.getLang() === "ar" ? "تحويل" : (I18N.getLang() === "he" ? "המרה" : "Convert")}</div>
+        <div class="currency-tag">${I18N.t("convertTag")}</div>
       `;
       btn.addEventListener("click", () => setCurrency(code));
       btn.addEventListener("keydown", (e) => {
@@ -862,7 +866,7 @@
     if (!rateInfo) return;
     if (isError){ rateInfo.textContent = I18N.t("msgRatesFail"); return; }
     if (!ratesObj){ rateInfo.textContent = ""; return; }
-    rateInfo.textContent = `Base: ${ratesObj.base} • ${ratesObj.timeLastUpdate}`;
+    rateInfo.textContent = `${I18N.t("rateBase")}: ${ratesObj.base} • ${ratesObj.timeLastUpdate}`;
   }
 
   function isPossibleDuplicate(normalized){
@@ -1118,10 +1122,7 @@
   }
 
   function pdfAllTitle(){
-    const lang = I18N.getLang();
-    if (lang === "ar") return "جميع المصروفات";
-    if (lang === "he") return "כל ההוצאות";
-    return "All expenses";
+    return I18N.t("pdfAllTitle");
   }
 
   function pdfSectionTitle(paymentType){
@@ -1228,7 +1229,7 @@
       sections.push(buildPdfSectionHtml(pdfSectionTitle(pt), prep(items), cur, total));
     }
 
-    const title = `${pdfAllTitle()} — ${selectedMonth}`;
+    const title = `${pdfAllTitle()} â€” ${selectedMonth}`;
 
     const css = `
       :root{ --b:#111; --g:#fff; }
@@ -1339,7 +1340,7 @@
   }
 
   function clearBox(box){ if (box) box.innerHTML = ""; }
-  function setPlaceholder(box){ if (box){ clearBox(box); box.textContent = "—"; } }
+  function setPlaceholder(box){ if (box){ clearBox(box); box.textContent = "â€”"; } }
 
   function renderKpis(box, headerTitle, headerSub, badge, kpis, footerText){
     if (!box) return;
@@ -1422,8 +1423,8 @@
     const avgDaily = total / elapsed;
 
     const kpis = [
-      { label: I18N.t("insightsTopCategory"), value: UIService.fmtMoney(topCat ? topCat.sum : 0, "ILS"), meta: topCat ? UIService.labelCategory(topCat.key) : "—" },
-      { label: I18N.t("insightsTopDay"), value: topD ? topD.key : "—", meta: topD ? UIService.fmtMoney(topD.sum, "ILS") : "" },
+      { label: I18N.t("insightsTopCategory"), value: UIService.fmtMoney(topCat ? topCat.sum : 0, "ILS"), meta: topCat ? UIService.labelCategory(topCat.key) : "â€”" },
+      { label: I18N.t("insightsTopDay"), value: topD ? topD.key : "â€”", meta: topD ? UIService.fmtMoney(topD.sum, "ILS") : "" },
       { label: I18N.t("insightsAvgDaily"), value: UIService.fmtMoney(avgDaily, "ILS"), meta: "" }
     ];
 
@@ -1460,7 +1461,7 @@
     const kpis = [
       { label: I18N.t("predictionAvgDaily"), value: UIService.fmtMoney(avgDaily, "ILS"), meta: `${elapsed}/${totalDays} ${I18N.t("metaDaysSoFar")}` },
       { label: I18N.t("predictionExpectedTotal"), value: UIService.fmtMoney(expectedTotal, "ILS"), meta: I18N.t("metaIfPaceContinues") },
-      { label: I18N.t("predictionBudgetDiff"), value: (budget>0) ? UIService.fmtMoney(diff, "ILS") : "—", meta: (budget>0) ? I18N.t("metaBudgetMinusExpected") : I18N.t("metaSetBudgetToCompare") }
+      { label: I18N.t("predictionBudgetDiff"), value: (budget>0) ? UIService.fmtMoney(diff, "ILS") : "â€”", meta: (budget>0) ? I18N.t("metaBudgetMinusExpected") : I18N.t("metaSetBudgetToCompare") }
     ];
 
     renderKpis(predictionBox, I18N.t("predictionTitle"), I18N.t("predictionSub"), badge, kpis, footer);
@@ -1470,7 +1471,7 @@
     if (!budgetBar || !budgetPctLabel || !budgetProgressHint) return;
 
     if (!budget || budget <= 0){
-      budgetPctLabel.textContent = "—";
+      budgetPctLabel.textContent = "â€”";
       budgetBar.style.width = "0%";
       budgetBar.style.background = "rgba(96,165,250,.65)";
       budgetProgressHint.textContent = "";
@@ -1485,10 +1486,10 @@
 
     if (pct >= 100){
       budgetBar.style.background = "rgba(255,77,79,.78)";
-      budgetProgressHint.textContent = I18N.getLang() === "he" ? "חריגה" : (I18N.getLang() === "ar" ? "تجاوز" : "Exceeded");
+      budgetProgressHint.textContent = I18N.t("badgeExceeded");
     } else if (pct >= 80){
       budgetBar.style.background = "rgba(245,166,35,.78)";
-      budgetProgressHint.textContent = I18N.getLang() === "he" ? "מתקרב לתקציב" : (I18N.getLang() === "ar" ? "قريب من الميزانية" : "Near budget");
+      budgetProgressHint.textContent = I18N.t("badgeNearBudget");
     } else {
       budgetBar.style.background = "rgba(34,197,94,.78)";
       budgetProgressHint.textContent = "";
@@ -1543,7 +1544,7 @@
     if (monthTotalEl) monthTotalEl.textContent = UIService.fmtMoney(monthTotal, "ILS");
 
     const remaining = (budget > 0) ? (budget - monthTotal) : 0;
-    if (monthRemainingEl) monthRemainingEl.textContent = budget > 0 ? UIService.fmtMoney(remaining, "ILS") : "—";
+    if (monthRemainingEl) monthRemainingEl.textContent = budget > 0 ? UIService.fmtMoney(remaining, "ILS") : "â€”";
 
     const converted = ratesObj ? ApiService.convertAmount(monthTotal, ratesObj, currency) : monthTotal;
     if (displayTotalEl) displayTotalEl.textContent = UIService.fmtMoney(converted, currency);
@@ -1571,7 +1572,7 @@
 
     updateRateInfo(false);
 
-    // ✅ charts always visible now
+    // âœ… charts always visible now
     if (window.ChartService?.updateCharts){
       ChartService.updateCharts(list);
     }
@@ -1627,3 +1628,4 @@ function initTabs(){
 }
 
 document.addEventListener("DOMContentLoaded", initTabs);
+

@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const KEY_LANG = "et_lang_v3";
   const DEFAULT_LANG = "en";
 
@@ -80,6 +80,8 @@
       monthRemaining: "Remaining",
       displayTotal: "In currency",
       listTitle: "Expenses",
+      listHint: "Manage your expenses and export reports.",
+      insightsHint: "Charts that summarize your spending.",
       emptyState: "No expenses yet. Add your first one.",
 
       search: "Search",
@@ -163,13 +165,14 @@
       errDecimals: "Max 2 decimal places allowed.",
       errDescLen: "Description too long (max 60).",
 
-      /* ✅ Added for new UI */
+      /* âœ… Added for new UI */
       filtersOpen: "Filters",
       applyFilters: "Apply",
 
       badgeExceeded: "Exceeded",
       badgeNearBudget: "Near budget",
       badgeWithinBudget: "Within budget",
+      budgetNotSet: "No budget set.",
       metaDaysSoFar: "days",
       metaIfPaceContinues: "If pace continues",
       metaBudgetMinusExpected: "Budget minus expected",
@@ -178,7 +181,7 @@
       footerLikelyExceed: "Likely exceed budget by",
       predictionSub: "Clear numbers that show where your month is heading.",
 
-      /* ✅ CSV column headers (no "csv" prefix) */
+      /* âœ… CSV column headers (no "csv" prefix) */
       colDate: "Date",
       colAmount: "Amount",
       colCurrency: "Currency",
@@ -186,7 +189,64 @@
       colPayment: "Payment",
       colDescription: "Description",
       pdfTotal: "Total amount",
-      pdfCurrencyType: "Currency"
+      pdfCurrencyType: "Currency",
+      pdfAllTitle: "All expenses",
+      close: "Close",
+      brand: "Brand",
+      intro: "Intro",
+      highlights: "Highlights",
+      info: "Info",
+      navigation: "Navigation",
+      dashboardTabs: "Dashboard tabs",
+      userMenuLabel: "User menu",
+      welcome: "Welcome",
+      insightsSummary: "Insights summary",
+      budgetProgress: "Budget progress",
+      summaryMetrics: "Summary metrics",
+      monthlyComparison: "Monthly comparison",
+      expensesTable: "Expenses table",
+      dashboard: "Dashboard",
+      monthlyFlow: "Monthly Flow",
+      monthlyFlowDesc: "Track spending, budget, and trends in one place.",
+      landingEyebrow: "Colorful personal finance dashboard",
+      langEnglish: "English",
+      langArabic: "Arabic",
+      langHebrew: "Hebrew",
+      idLabel: "ID",
+      alertDefaultTitle: "Alert",
+      alertDefaultMsg: "Message",
+      alertBudgetExceededTitle: "Budget exceeded",
+      alertBudgetExceededMsg: "⚠️ You exceeded your budget.",
+      alertBudgetWarningTitle: "Budget warning",
+      alertBudgetWarningMsg: "⚠️ You're close to your budget (85%+).",
+      alertSpendingInsightTitle: "Spending insight",
+      alertSpendingInsightMsg: "💡 You're past 60% of your budget.",
+      quoteTitle: "💡 Financial Quote",
+      refreshQuote: "Refresh",
+      quoteLoading: "Loading...",
+      quoteFallbackText: "Track your expenses wisely.",
+      quoteFallbackAuthor: "Smart Coach",
+      filtersHint: "Open advanced filters for payment type, category, date range, and sorting.",
+      compareTitle: "Compared to last month",
+      heatmapTitle: "📅 Spending Heatmap",
+      heatmapSubtitle: "Darker day = higher spending",
+      heatmapLess: "Less",
+      heatmapMore: "More",
+      heatmapHintDefault: "Click a day to see total.",
+      heatmapNoSpending: "No spending recorded.",
+      heatmapDateSpent: "Date: {date} — Spent: {amount}",
+      convertTag: "Convert",
+      rateBase: "Base",
+      welcomeTitle: "Hi, Tala 👋",
+      welcomeSub: "Ready to track your spending today?",
+      welcomeTitleNamed: "Hi, {name} 👋",
+      welcomeTitleGuest: "Hi 👋",
+      currency: "Currency",
+      currencyNameILS: "Shekel",
+      currencyNameUSD: "Dollar",
+      currencyNameEUR: "Euro",
+      currencyNameGBP: "Pound",
+      currencyNameJOD: "Dinar"
     },
 
     ar: {
@@ -266,6 +326,8 @@
       monthRemaining: "المتبقي",
       displayTotal: "حسب العملة",
       listTitle: "المصروفات",
+      listHint: "أدر مصروفاتك وصدّر التقارير.",
+      insightsHint: "رسوم تلخص نمط الإنفاق.",
       emptyState: "لا توجد مصروفات بعد. أضف أول مصروف.",
 
       search: "بحث",
@@ -349,13 +411,14 @@
       errDecimals: "يسمح فقط حتى منزلتين عشريتين.",
       errDescLen: "الوصف طويل (الحد 60).",
 
-      /* ✅ Added for new UI */
+      /* âœ… Added for new UI */
       filtersOpen: "مسنّدات",
       applyFilters: "تم",
 
       badgeExceeded: "تجاوز",
       badgeNearBudget: "قريب من الميزانية",
       badgeWithinBudget: "ضمن الميزانية",
+      budgetNotSet: "لم يتم تحديد ميزانية.",
       metaDaysSoFar: "يوم",
       metaIfPaceContinues: "إذا استمر نفس المعدّل",
       metaBudgetMinusExpected: "الميزانية ناقص المتوقع",
@@ -364,7 +427,7 @@
       footerLikelyExceed: "متوقع تتجاوز الميزانية تقريبًا بـ",
       predictionSub: "أرقام واضحة تساعدك تعرف وين رايح الشهر.",
 
-      /* ✅ CSV column headers (no "csv" prefix) */
+      /* âœ… CSV column headers (no "csv" prefix) */
       colDate: "التاريخ",
       colAmount: "المبلغ",
       colCurrency: "العملة",
@@ -372,7 +435,64 @@
       colPayment: "الدفع",
       colDescription: "الوصف",
       pdfTotal: "مجموع المبالغ",
-      pdfCurrencyType: "حسب نوع العملة"
+      pdfCurrencyType: "حسب نوع العملة",
+      pdfAllTitle: "جميع المصروفات",
+      close: "إغلاق",
+      brand: "العلامة",
+      intro: "مقدمة",
+      highlights: "أبرز النقاط",
+      info: "معلومات",
+      navigation: "التنقل",
+      dashboardTabs: "تبويبات اللوحة",
+      userMenuLabel: "قائمة المستخدم",
+      welcome: "ترحيب",
+      insightsSummary: "ملخص الرؤى",
+      budgetProgress: "تقدم الميزانية",
+      summaryMetrics: "مؤشرات الملخص",
+      monthlyComparison: "مقارنة شهرية",
+      expensesTable: "جدول المصروفات",
+      dashboard: "لوحة التحكم",
+      monthlyFlow: "سير الشهر",
+      monthlyFlowDesc: "تابع الصرف والميزانية والاتجاهات في مكان واحد.",
+      landingEyebrow: "لوحة مالية شخصية ملونة",
+      langEnglish: "الإنجليزية",
+      langArabic: "العربية",
+      langHebrew: "العبرية",
+      idLabel: "الرقم",
+      alertDefaultTitle: "تنبيه",
+      alertDefaultMsg: "رسالة",
+      alertBudgetExceededTitle: "تم تجاوز الميزانية",
+      alertBudgetExceededMsg: "⚠️ تم تجاوز ميزانيتك.",
+      alertBudgetWarningTitle: "تحذير الميزانية",
+      alertBudgetWarningMsg: "⚠️ أنت قريب من الحد (85%+).",
+      alertSpendingInsightTitle: "معلومة إنفاق",
+      alertSpendingInsightMsg: "💡 تجاوزت 60% من الميزانية.",
+      quoteTitle: "💡 اقتباس مالي",
+      refreshQuote: "تحديث",
+      quoteLoading: "جارٍ التحميل...",
+      quoteFallbackText: "تابع مصروفاتك بحكمة.",
+      quoteFallbackAuthor: "المدرب الذكي",
+      filtersHint: "افتح الفلاتر المتقدمة لطريقة الدفع والفئة ونطاق التاريخ والترتيب.",
+      compareTitle: "مقارنة بالشهر الماضي",
+      heatmapTitle: "📅 خريطة الإنفاق الحرارية",
+      heatmapSubtitle: "اليوم الأغمق يعني إنفاقًا أعلى",
+      heatmapLess: "أقل",
+      heatmapMore: "أكثر",
+      heatmapHintDefault: "اضغط على يوم لرؤية الإجمالي.",
+      heatmapNoSpending: "لا يوجد إنفاق مسجل.",
+      heatmapDateSpent: "التاريخ: {date} — المصروف: {amount}",
+      convertTag: "تحويل",
+      rateBase: "الأساس",
+      welcomeTitle: "مرحبًا، تالا 👋",
+      welcomeSub: "جاهزة لتتبع مصروفاتك اليوم؟",
+      welcomeTitleNamed: "مرحبًا، {name} 👋",
+      welcomeTitleGuest: "مرحبًا 👋",
+      currency: "العملة",
+      currencyNameILS: "شيكل",
+      currencyNameUSD: "دولار",
+      currencyNameEUR: "يورو",
+      currencyNameGBP: "جنيه",
+      currencyNameJOD: "دينار"
     },
 
     he: {
@@ -452,6 +572,8 @@
       monthRemaining: "נשאר",
       displayTotal: "לפי מטבע",
       listTitle: "הוצאות",
+      listHint: "נהל את ההוצאות וייצא דוחות.",
+      insightsHint: "גרפים שמסכמים את דפוסי ההוצאה.",
       emptyState: "אין הוצאות עדיין. הוסף את הראשונה.",
 
       search: "חיפוש",
@@ -535,13 +657,14 @@
       errDecimals: "מקסימום 2 ספרות אחרי הנקודה.",
       errDescLen: "התיאור ארוך מדי (מקסימום 60).",
 
-      /* ✅ Added for new UI */
+      /* âœ… Added for new UI */
       filtersOpen: "מסננים",
       applyFilters: "סיום",
 
       badgeExceeded: "חריגה",
       badgeNearBudget: "קרוב לתקציב",
       badgeWithinBudget: "בתוך התקציב",
+      budgetNotSet: "לא הוגדר תקציב.",
       metaDaysSoFar: "ימים",
       metaIfPaceContinues: "אם הקצב נמשך",
       metaBudgetMinusExpected: "תקציב פחות צפוי",
@@ -550,7 +673,7 @@
       footerLikelyExceed: "כנראה חריגה מהתקציב בערך",
       predictionSub: "מספרים ברורים שמראים לאן החודש הולך.",
 
-      /* ✅ CSV column headers (no "csv" prefix) */
+      /* âœ… CSV column headers (no "csv" prefix) */
       colDate: "תאריך",
       colAmount: "סכום",
       colCurrency: "מטבע",
@@ -558,7 +681,64 @@
       colPayment: "תשלום",
       colDescription: "תיאור",
       pdfTotal: "סה״כ סכומים",
-      pdfCurrencyType: "לפי סוג מטבע"
+      pdfCurrencyType: "לפי סוג מטבע",
+      pdfAllTitle: "כל ההוצאות",
+      close: "סגור",
+      brand: "מותג",
+      intro: "פתיחה",
+      highlights: "דגשים",
+      info: "מידע",
+      navigation: "ניווט",
+      dashboardTabs: "לשוניות לוח הבקרה",
+      userMenuLabel: "תפריט משתמש",
+      welcome: "ברכה",
+      insightsSummary: "סיכום תובנות",
+      budgetProgress: "התקדמות תקציב",
+      summaryMetrics: "מדדי סיכום",
+      monthlyComparison: "השוואה חודשית",
+      expensesTable: "טבלת הוצאות",
+      dashboard: "לוח בקרה",
+      monthlyFlow: "זרימת החודש",
+      monthlyFlowDesc: "עקבו אחרי הוצאות, תקציב ומגמות במקום אחד.",
+      landingEyebrow: "דשבורד פיננסי אישי צבעוני",
+      langEnglish: "אנגלית",
+      langArabic: "ערבית",
+      langHebrew: "עברית",
+      idLabel: "ת״ז",
+      alertDefaultTitle: "התראה",
+      alertDefaultMsg: "הודעה",
+      alertBudgetExceededTitle: "חרגת מהתקציב",
+      alertBudgetExceededMsg: "⚠️ חרגת מהתקציב שלך.",
+      alertBudgetWarningTitle: "אזהרת תקציב",
+      alertBudgetWarningMsg: "⚠️ את/ה קרוב/ה לתקציב (85%+).",
+      alertSpendingInsightTitle: "תובנת הוצאות",
+      alertSpendingInsightMsg: "💡 עברת את 60% מהתקציב.",
+      quoteTitle: "💡 ציטוט פיננסי",
+      refreshQuote: "רענון",
+      quoteLoading: "טוען...",
+      quoteFallbackText: "נהלו את ההוצאות בחוכמה.",
+      quoteFallbackAuthor: "מאמן חכם",
+      filtersHint: "פתחו מסננים מתקדמים לאמצעי תשלום, קטגוריה, טווח תאריכים ומיון.",
+      compareTitle: "בהשוואה לחודש שעבר",
+      heatmapTitle: "📅 מפת חום להוצאות",
+      heatmapSubtitle: "יום כהה יותר = הוצאה גבוהה יותר",
+      heatmapLess: "פחות",
+      heatmapMore: "יותר",
+      heatmapHintDefault: "לחצו על יום כדי לראות סך הכול.",
+      heatmapNoSpending: "לא נרשמו הוצאות.",
+      heatmapDateSpent: "תאריך: {date} — הוצאה: {amount}",
+      convertTag: "המרה",
+      rateBase: "בסיס",
+      welcomeTitle: "היי, טאלה 👋",
+      welcomeSub: "מוכנה לעקוב אחרי ההוצאות היום?",
+      welcomeTitleNamed: "היי, {name} 👋",
+      welcomeTitleGuest: "היי 👋",
+      currency: "מטבע",
+      currencyNameILS: "שקל",
+      currencyNameUSD: "דולר",
+      currencyNameEUR: "אירו",
+      currencyNameGBP: "פאונד",
+      currencyNameJOD: "דינר"
     }
   };
 
@@ -588,6 +768,14 @@
 
     document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
       el.setAttribute("placeholder", t(el.getAttribute("data-i18n-ph")));
+    });
+
+    document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+      el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria")));
+    });
+
+    document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+      el.setAttribute("title", t(el.getAttribute("data-i18n-title")));
     });
   }
 

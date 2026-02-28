@@ -98,12 +98,12 @@
 
   function budgetMessage(total, budget){
     if (!budget || budget <= 0){
-      return I18N.getLang() === "he" ? "לא הוגדר תקציב." : (I18N.getLang() === "ar" ? "لم يتم تحديد ميزانية." : "No budget set.");
+      return I18N.t("budgetNotSet");
     }
     const pct = (total / budget) * 100;
     if (pct < 80) return `${pct.toFixed(0)}%`;
-    if (pct < 100) return `${pct.toFixed(0)}% • ${I18N.getLang() === "he" ? "מתקרב לתקציב" : (I18N.getLang() === "ar" ? "قريب من الميزانية" : "Near budget")}`;
-    return `${pct.toFixed(0)}% • ${I18N.getLang() === "he" ? "חריגה" : (I18N.getLang() === "ar" ? "تجاوز" : "Exceeded")}`;
+    if (pct < 100) return `${pct.toFixed(0)}% - ${I18N.t("badgeNearBudget")}`;
+    return `${pct.toFixed(0)}% - ${I18N.t("badgeExceeded")}`;
   }
 
   window.UIService = {

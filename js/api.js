@@ -21,17 +21,23 @@
   }
 
   function fetchFinancialQuote(){
-    return fetch("https://api.quotable.io/random?tags=wisdom|money|success")
-      .then(res => res.json())
+    const url = `https://api.adviceslip.com/advice?ts=${Date.now()}`;
+    return fetch(url, { cache: "no-store" })
+      .then(res => {
+        if (!res.ok) throw new Error("QUOTE_FETCH_FAIL");
+        return res.json();
+      })
       .then(data => ({
-        content: data.content,
-        author: data.author
+        content: data?.slip?.advice || (window.I18N?.t ? I18N.t("quoteFallbackText") : "Track your expenses wisely."),
+        author: "AdviceSlip"
       }))
       .catch(err => {
         console.error("Quote API error:", err);
+        const fallbackContent = window.I18N?.t ? I18N.t("quoteFallbackText") : "Track your expenses wisely.";
+        const fallbackAuthor = "AdviceSlip";
         return {
-          content: "Track your expenses wisely.",
-          author: "Smart Coach"
+          content: fallbackContent,
+          author: fallbackAuthor
         };
       });
   }
