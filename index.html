@@ -1,23 +1,31 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Expense Tracker</title>
-  <link rel="stylesheet" href="css/landing.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="appTitle">Expense Tracker</title>
+  <link rel="stylesheet" href="css/landing.css" />
 </head>
 
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
-  <button id="a11yFab" class="a11y-fab" type="button" aria-label="Accessibility" aria-expanded="false" aria-controls="a11yPanel" title="Accessibility">
-    <span aria-hidden="true">♿</span>
-  </button>
+  <button
+    id="a11yFab"
+    class="a11y-fab"
+    type="button"
+    aria-label="Accessibility"
+    data-i18n-aria="accessibility"
+    aria-expanded="false"
+    aria-controls="a11yPanel"
+    title="Accessibility"
+    data-i18n-title="accessibility"
+  >A11Y</button>
 
   <div id="a11yPanel" class="a11y-panel" role="dialog" aria-modal="true" aria-labelledby="a11yPanelTitle" hidden>
     <div class="a11y-panel-head">
       <h3 id="a11yPanelTitle" data-i18n="accessibility">Accessibility</h3>
-      <button id="a11yClose" class="a11y-close" type="button" aria-label="Close">✕</button>
+      <button id="a11yClose" class="a11y-close" type="button" aria-label="Close" data-i18n-aria="close">x</button>
     </div>
     <div class="a11y-panel-body">
       <button class="a11y-opt" type="button" data-a11y="bigtext" data-i18n="biggerText">Bigger text</button>
@@ -28,24 +36,24 @@
   </div>
 
   <header class="topbar" role="banner">
-    <div class="brand" aria-label="Brand">
-      <span class="logo" aria-hidden="true">◎</span>
+    <div class="brand" aria-label="Brand" data-i18n-aria="brand">
+      <span class="logo" aria-hidden="true">$</span>
       <div>
         <div class="title" data-i18n="appTitle">Expense Tracker</div>
-        <div class="sub" data-i18n="landingTag">Smart tracking • Clear insights</div>
+        <div class="sub" data-i18n="landingTag">Smart tracking â€¢ Clear insights</div>
       </div>
     </div>
 
     <div class="right-actions">
       <label class="sr-only" for="langSelect" data-i18n="language">Language</label>
-      <select id="langSelect" class="select" aria-label="Language">
-        <option value="en">English</option>
-        <option value="ar">العربية</option>
-        <option value="he">עברית</option>
+      <select id="langSelect" class="select" aria-label="Language" data-i18n-aria="language">
+        <option value="en" data-i18n="langEnglish">English</option>
+        <option value="ar" data-i18n="langArabic">Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</option>
+        <option value="he" data-i18n="langHebrew">×¢×‘×¨×™×ª</option>
       </select>
 
-      <button id="themeToggle" class="icon-btn" type="button" aria-label="Theme" title="Theme">
-        <span aria-hidden="true">☾</span>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Theme" data-i18n-aria="theme" title="Theme" data-i18n-title="theme">
+        <span aria-hidden="true">â˜¾</span>
         <span class="sr-only" data-i18n="theme">Theme</span>
       </button>
 
@@ -54,8 +62,9 @@
   </header>
 
   <main id="main" class="wrap" role="main">
-    <section class="hero" aria-label="Intro">
+    <section class="hero" aria-label="Intro" data-i18n-aria="intro">
       <div class="hero-content">
+        <p class="eyebrow" data-i18n="landingEyebrow">Colorful personal finance dashboard</p>
         <h1 data-i18n="landingHeadline">Track your spending smarter</h1>
         <p data-i18n="landingText">
           Add expenses in seconds, see your monthly total, and view simple insights.
@@ -65,7 +74,7 @@
           <button class="btn primary" id="btnOpenRegister" data-i18n="register">Create account</button>
         </div>
 
-        <ul class="bullets" aria-label="Highlights">
+        <ul class="bullets" aria-label="Highlights" data-i18n-aria="highlights">
           <li data-i18n="landingB1">Add expenses fast (amount, category, date)</li>
           <li data-i18n="landingB2">Search + simple filters</li>
           <li data-i18n="landingB3">Charts and budget warning</li>
@@ -75,10 +84,16 @@
 
       <div class="hero-image" aria-hidden="true">
         <div class="glass">
-          <div class="card-mini">
-            <div class="pill">ILS</div>
-            <div class="pill">USD</div>
-            <div class="pill">EUR</div>
+          <div class="glass-head">
+            <span class="pill" data-i18n="tabList">List</span>
+            <span class="pill" data-i18n="tabInsights">Insights</span>
+            <span class="pill" data-i18n="budgetTitle">Budget</span>
+          </div>
+          <div class="metric-strip">
+            <div class="mini-card one"></div>
+            <div class="mini-card two"></div>
+            <div class="mini-card three"></div>
+            <div class="mini-card four"></div>
           </div>
           <div class="chart-mini"></div>
           <div class="lines">
@@ -88,7 +103,7 @@
       </div>
     </section>
 
-    <section class="info" aria-label="Info">
+    <section class="info" aria-label="Info" data-i18n-aria="info">
       <div class="info-card">
         <h2 data-i18n="landingPrivacyTitle">Privacy</h2>
         <p data-i18n="landingPrivacyText">
@@ -106,7 +121,7 @@
     <div class="modal-card">
       <div class="modal-head">
         <h3 id="loginTitle" data-i18n="login">Login</h3>
-        <button class="icon-btn" data-close="login" aria-label="Close">✕</button>
+        <button class="icon-btn" data-close="login" aria-label="Close" data-i18n-aria="close">x</button>
       </div>
 
       <form id="loginForm" novalidate>
@@ -136,7 +151,7 @@
     <div class="modal-card">
       <div class="modal-head">
         <h3 id="registerTitle" data-i18n="register">Create account</h3>
-        <button class="icon-btn" data-close="register" aria-label="Close">✕</button>
+        <button class="icon-btn" data-close="register" aria-label="Close" data-i18n-aria="close">x</button>
       </div>
 
       <form id="registerForm" novalidate>
@@ -173,3 +188,5 @@
   <script src="js/landing.js"></script>
 </body>
 </html>
+
+
