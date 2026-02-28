@@ -9,7 +9,7 @@
 
   function groupSum(list, keyFn){
     const map = new Map();
-    for (const e of list){
+    for (const e of (list || [])){
       const k = keyFn(e);
       map.set(k, (map.get(k) || 0) + e.amount);
     }
@@ -48,12 +48,13 @@
     ensureCharts();
     if (!chartCategory || !chartPayment) return;
 
-    const catMap = groupSum(expenses, e => e.category);
+    const safeExpenses = expenses || [];
+    const catMap = groupSum(safeExpenses, e => e.category);
     chartCategory.data.labels = Array.from(catMap.keys()).map(UIService.labelCategory);
     chartCategory.data.datasets[0].data = Array.from(catMap.values());
     chartCategory.update();
 
-    const payMap = groupSum(expenses, e => e.paymentType);
+    const payMap = groupSum(safeExpenses, e => e.paymentType);
     chartPayment.data.labels = Array.from(payMap.keys()).map(UIService.labelPayment);
     chartPayment.data.datasets[0].data = Array.from(payMap.values());
     chartPayment.update();

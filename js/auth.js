@@ -3,7 +3,10 @@
   const KEY_SESSION = "et_session_v2";
 
   function loadUsers(){
-    try { return JSON.parse(localStorage.getItem(KEY_USERS)) || []; }
+    try {
+      const parsed = JSON.parse(localStorage.getItem(KEY_USERS));
+      return Array.isArray(parsed) ? parsed : [];
+    }
     catch { return []; }
   }
   function saveUsers(users){

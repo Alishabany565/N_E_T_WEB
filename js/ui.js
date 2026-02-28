@@ -19,6 +19,7 @@
   }
 
   function showErrors(el, errorKeys){
+    if (!el) return;
     if (!errorKeys || !errorKeys.length){
       el.style.display = "none";
       el.innerHTML = "";
@@ -51,9 +52,10 @@
   }
 
   function renderTable(tbody, list, currency, onEdit, onDelete, ratesObj, locked){
+    if (!tbody) return;
     tbody.innerHTML = "";
 
-    for (const e of list){
+    for (const e of (list || [])){
       const tr = document.createElement("tr");
 
       const amountConverted = ratesObj ? ApiService.convertAmount(e.amount, ratesObj, currency) : e.amount;

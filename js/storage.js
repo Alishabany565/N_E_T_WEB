@@ -11,7 +11,8 @@
   function keyMonth(base, userId, yyyymm){ return `${base}_${userId}_${yyyymm}`; }
 
   function loadExpenses(userId){
-    return safeParse(localStorage.getItem(key(BASE_EXP, userId)), []);
+    const parsed = safeParse(localStorage.getItem(key(BASE_EXP, userId)), []);
+    return Array.isArray(parsed) ? parsed : [];
   }
   function saveExpenses(userId, list){
     localStorage.setItem(key(BASE_EXP, userId), JSON.stringify(list));

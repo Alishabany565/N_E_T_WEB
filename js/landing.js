@@ -44,6 +44,7 @@
   const registerErrors = document.getElementById("registerErrors");
 
   function showErr(el, msg){
+    if (!el) return;
     el.style.display = msg ? "block" : "none";
     el.textContent = msg || "";
   }
@@ -74,8 +75,8 @@
     if (lastFocused) lastFocused.focus();
   }
 
-  function openModal(m){ m.hidden = false; trapFocus(m); }
-  function closeModal(m){ m.hidden = true; releaseFocus(m); }
+  function closeModal(m){ if (!m) return; m.hidden = true; releaseFocus(m); }
+  function openModal(m){ if (!m) return; m.hidden = false; trapFocus(m); }
 
   btnOpenLogin?.addEventListener("click", () => openModal(loginModal));
   btnOpenRegister?.addEventListener("click", () => openModal(registerModal));
@@ -99,9 +100,12 @@
     e.preventDefault();
     showErr(loginErrors, "");
     try{
+      const loginEmail = document.getElementById("loginEmail");
+      const loginPassword = document.getElementById("loginPassword");
+      if (!loginEmail || !loginPassword) return;
       await Auth.login({
-        email: document.getElementById("loginEmail").value.trim(),
-        password: document.getElementById("loginPassword").value
+        email: loginEmail.value.trim(),
+        password: loginPassword.value
       });
       window.location.href = "app.html";
     } catch {
@@ -113,10 +117,14 @@
     e.preventDefault();
     showErr(registerErrors, "");
     try{
+      const regName = document.getElementById("regName");
+      const regEmail = document.getElementById("regEmail");
+      const regPassword = document.getElementById("regPassword");
+      if (!regName || !regEmail || !regPassword) return;
       await Auth.register({
-        fullName: document.getElementById("regName").value.trim(),
-        email: document.getElementById("regEmail").value.trim(),
-        password: document.getElementById("regPassword").value
+        fullName: regName.value.trim(),
+        email: regEmail.value.trim(),
+        password: regPassword.value
       });
       window.location.href = "app.html";
     } catch {

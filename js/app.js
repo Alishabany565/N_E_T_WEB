@@ -1,7 +1,12 @@
 // app.js
 (() => {
-  A11Y.init();
-  I18N.applyLang();
+  function startApp(){
+  if (window.A11Y?.init) A11Y.init();
+  if (window.I18N?.applyLang) I18N.applyLang();
+  if (!window.I18N || !window.Auth?.requireAuthOrRedirect || !window.StorageService || !window.UIService || !window.ValidationService || !window.ApiService){
+    console.warn("[App] Required services are missing.");
+    return;
+  }
 
   const THEME_KEY = "et_theme_v1";
   function getTheme(){
@@ -26,6 +31,7 @@
   document.getElementById("themeToggle")?.addEventListener("click", toggleTheme);
 
   const session = Auth.requireAuthOrRedirect();
+  if (!session || !session.userId) return;
   const userId = session.userId;
 
   const PERSONAL_DETAILS = [
@@ -33,12 +39,18 @@
     { first: "Tala", last: "Jabaren", id: "22222222" }
   ];
 
-  let expenses = StorageService.loadExpenses(userId);
+  const loadedExpenses = StorageService.loadExpenses(userId);
+  let expenses = Array.isArray(loadedExpenses) ? loadedExpenses : [];
   let currency = StorageService.loadCurrency(userId);
   let ratesObj = StorageService.loadRates(userId);
 
+  function asArray(v){
+    return Array.isArray(v) ? v : [];
+  }
+
   function monthKey(dateStr){
     const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return "";
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
   }
   function currentMonthKey(){
@@ -46,10 +58,12 @@
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
   }
   function daysInMonth(yyyymm){
+    if (!/^\d{4}-\d{2}$/.test(yyyymm || "")) return 30;
     const [y,m] = yyyymm.split("-").map(Number);
     return new Date(y, m, 0).getDate();
   }
   function daysElapsedInMonth(yyyymm){
+    if (!/^\d{4}-\d{2}$/.test(yyyymm || "")) return 1;
     const [y,m] = yyyymm.split("-").map(Number);
     const now = new Date();
     if (now.getFullYear() === y && (now.getMonth()+1) === m) return now.getDate();
@@ -126,6 +140,404 @@
   const btnApplyFilters = document.getElementById("btnApplyFilters");
   const btnResetFilters = document.getElementById("btnResetFilters");
 
+  function initQuoteFeature(){
+    const quoteText = document.getElementById("quoteText");
+    const quoteAuthor = document.getElementById("quoteAuthor");
+    const refreshBtn = document.getElementById("btnRefreshQuote");
+
+    if (!quoteText || !quoteAuthor) return;
+
+    function loadQuote(){
+      if (typeof fetchFinancialQuote !== "function"){
+        quoteText.textContent = "\"Track your expenses wisely.\"";
+        quoteAuthor.textContent = "— Smart Coach";
+        return;
+      }
+      fetchFinancialQuote().then(q => {
+        quoteText.textContent = `"${q.content}"`;
+        quoteAuthor.textContent = `— ${q.author}`;
+      });
+    }
+
+    loadQuote();
+
+    if (refreshBtn){
+      refreshBtn.addEventListener("click", loadQuote);
+    }
+  }
+
+  function initPersonalDetailsModal(){
+    const btn = document.getElementById("btnPersonal");
+    const modal = document.getElementById("personalModal");
+    const closeBtn = document.getElementById("closePersonalModal");
+    const overlay = modal ? modal.querySelector(".modal-overlay") : null;
+
+    if (!btn || !modal){
+      console.warn("[PersonalModal] Missing required elements.");
+      return;
+    }
+
+    function openModal(){
+      closeMenu();
+      modal.hidden = false;
+    }
+
+    function closeModal(){
+      modal.hidden = true;
+    }
+
+    btn.addEventListener("click", openModal);
+
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    if (overlay) overlay.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+  }
+
+  const featureWarned = {};
+  function warnOnce(key, message){
+    if (featureWarned[key]) return;
+    featureWarned[key] = true;
+    console.warn(message);
+  }
+
+  function parseNumericText(value){
+    if (value == null) return NaN;
+    const cleaned = String(value)
+      .replace(/,/g, "")
+      .replace(/[^\d.-]/g, "");
+    if (!cleaned || cleaned === "-" || cleaned === "." || cleaned === "-.") return NaN;
+    const n = Number(cleaned);
+    return Number.isFinite(n) ? n : NaN;
+  }
+
+  function initWelcomeCard(){
+    const welcomeTitleEl = document.getElementById("welcomeTitle");
+    const welcomeSubEl = document.getElementById("welcomeSub");
+    const welcomeDateEl = document.getElementById("welcomeDate");
+    if (!welcomeTitleEl || !welcomeSubEl || !welcomeDateEl){
+      warnOnce("welcomeCard", "[WelcomeCard] Missing welcome card elements.");
+      return;
+    }
+
+    const today = new Intl.DateTimeFormat(undefined, {
+      weekday: "long",
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    }).format(new Date());
+
+    const fullName = String(session?.fullName || "").trim();
+    const email = String(session?.email || "").trim();
+    let displayName = "";
+
+    if (fullName){
+      displayName = fullName.split(/\s+/)[0];
+    } else if (email){
+      displayName = email.split("@")[0];
+    }
+
+    welcomeTitleEl.textContent = displayName ? `Hi, ${displayName} 👋` : "Hi 👋";
+    welcomeDateEl.textContent = today;
+  }
+
+  function updateSpendingAlert(){
+    const alertEl = document.getElementById("spendingAlert");
+    const alertIconEl = document.getElementById("alertIcon");
+    const alertTitleEl = document.getElementById("alertTitle");
+    const alertMsgEl = document.getElementById("alertMsg");
+    if (!alertEl || !alertIconEl || !alertTitleEl || !alertMsgEl){
+      warnOnce("spendingAlert", "[SmartSpendingAlert] Missing alert elements.");
+      return;
+    }
+
+    const spentRaw = monthTotalEl?.textContent || "";
+    const budgetRaw = budgetInput?.value || "";
+
+    const spentNum = parseNumericText(spentRaw);
+    const budgetNum = parseNumericText(budgetRaw);
+    const spent = Number.isFinite(spentNum) ? spentNum : 0;
+    const budget = Number.isFinite(budgetNum) ? budgetNum : 0;
+
+    alertEl.classList.remove("alert-high", "alert-warn", "alert-mid");
+
+    if (!(budget > 0)){
+      alertEl.hidden = true;
+      return;
+    }
+
+    const ratio = spent / budget;
+
+    if (ratio >= 1){
+      alertEl.classList.add("alert-high");
+      alertIconEl.textContent = "⚠️";
+      alertTitleEl.textContent = "Budget exceeded";
+      alertMsgEl.textContent = "⚠️ You exceeded your budget.";
+      alertEl.hidden = false;
+      return;
+    }
+
+    if (ratio >= 0.85){
+      alertEl.classList.add("alert-warn");
+      alertIconEl.textContent = "⚠️";
+      alertTitleEl.textContent = "Budget warning";
+      alertMsgEl.textContent = "⚠️ You're close to your budget (85%+).";
+      alertEl.hidden = false;
+      return;
+    }
+
+    if (ratio >= 0.6){
+      alertEl.classList.add("alert-mid");
+      alertIconEl.textContent = "💡";
+      alertTitleEl.textContent = "Spending insight";
+      alertMsgEl.textContent = "💡 You're past 60% of your budget.";
+      alertEl.hidden = false;
+      return;
+    }
+
+    alertEl.hidden = true;
+  }
+
+  function previousMonthKey(month){
+    if (!month || typeof month !== "string") return "";
+    const parts = month.split("-");
+    if (parts.length !== 2) return "";
+    const y = Number(parts[0]);
+    const m = Number(parts[1]);
+    if (!Number.isFinite(y) || !Number.isFinite(m)) return "";
+
+    const d = new Date(y, m - 2, 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  }
+
+  function expenseMonthKey(exp){
+    if (!exp || typeof exp !== "object") return null;
+
+    if (typeof exp.date === "string"){
+      const m = exp.date.match(/^(\d{4})-(\d{2})/);
+      if (m) return `${m[1]}-${m[2]}`;
+    }
+
+    const d = new Date(exp.date);
+    if (Number.isNaN(d.getTime())) return null;
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  }
+
+  function expenseAmount(exp){
+    if (!exp || typeof exp !== "object") return null;
+    if (typeof exp.amount === "number" && Number.isFinite(exp.amount)) return exp.amount;
+
+    const n = parseNumericText(exp.amount);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function updateMonthlyComparison(){
+    const compareEl = document.getElementById("compareValue");
+    if (!compareEl){
+      warnOnce("monthlyCompareEl", "[MonthlyComparison] Missing #compareValue element.");
+      return;
+    }
+
+    compareEl.classList.remove("compare-up", "compare-down", "compare-flat");
+
+    if (!Array.isArray(expenses)){
+      warnOnce("monthlyCompareData", "[MonthlyComparison] Expenses data is not an array.");
+      compareEl.textContent = "—";
+      compareEl.classList.add("compare-flat");
+      return;
+    }
+
+    const currentKey = currentMonthKey();
+    const prevKey = previousMonthKey(currentKey);
+    let thisMonthTotal = 0;
+    let lastMonthTotal = 0;
+    let schemaWarned = false;
+
+    for (const exp of asArray(expenses)){
+      const mKey = expenseMonthKey(exp);
+      const amt = expenseAmount(exp);
+
+      if (!mKey || !Number.isFinite(amt)){
+        if (!schemaWarned){
+          schemaWarned = true;
+          console.warn("[MonthlyComparison] Unknown expense schema detected; some rows skipped.");
+        }
+        continue;
+      }
+
+      if (mKey === currentKey) thisMonthTotal += amt;
+      if (mKey === prevKey) lastMonthTotal += amt;
+    }
+
+    const diff = thisMonthTotal - lastMonthTotal;
+    const pct = lastMonthTotal === 0
+      ? (diff === 0 ? 0 : 100)
+      : Math.round(Math.abs((diff / lastMonthTotal) * 100));
+
+    const absDiff = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(Math.abs(diff));
+
+    if (diff > 0){
+      compareEl.textContent = `+${absDiff} (↑ ${pct}%)`;
+      compareEl.classList.add("compare-up");
+      return;
+    }
+
+    if (diff < 0){
+      compareEl.textContent = `-${absDiff} (↓ ${pct}%)`;
+      compareEl.classList.add("compare-down");
+      return;
+    }
+
+    compareEl.textContent = "0 (→ 0%)";
+    compareEl.classList.add("compare-flat");
+  }
+
+  function getUserId(){
+    if (typeof userId !== "undefined" && userId) return userId;
+    if (typeof currentUserId !== "undefined" && currentUserId) return currentUserId;
+    return "default";
+  }
+
+  function parseAmount(x){
+    if (typeof x === "number") return Number.isFinite(x) ? x : 0;
+    const cleaned = String(x ?? "")
+      .replace(/,/g, "")
+      .replace(/[^\d.-]/g, "");
+    const n = Number(cleaned);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function parseDateToKey(dateString){
+    if (!dateString) return null;
+    const raw = String(dateString).trim();
+
+    let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m){
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const d = Number(m[3]);
+      const dt = new Date(y, mo - 1, d);
+      if (dt.getFullYear() === y && dt.getMonth() + 1 === mo && dt.getDate() === d){
+        return `${String(y).padStart(4, "0")}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      }
+      return null;
+    }
+
+    m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m){
+      const mo = Number(m[1]);
+      const d = Number(m[2]);
+      const y = Number(m[3]);
+      const dt = new Date(y, mo - 1, d);
+      if (dt.getFullYear() === y && dt.getMonth() + 1 === mo && dt.getDate() === d){
+        return `${String(y).padStart(4, "0")}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      }
+      return null;
+    }
+
+    const dt = new Date(raw);
+    if (Number.isNaN(dt.getTime())) return null;
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+  }
+
+  function getSelectedMonth(){
+    const value = monthSelect?.value;
+    if (value && /^\d{4}-\d{2}$/.test(value)){
+      const [year, month] = value.split("-").map(Number);
+      return { year, month };
+    }
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() + 1 };
+  }
+
+  function renderHeatmap(){
+    const grid = document.getElementById("heatmapGrid");
+    const hint = document.getElementById("heatmapHint");
+    if (!grid || !hint){
+      warnOnce("heatmapMissing", "[Heatmap] Missing #heatmapGrid or #heatmapHint.");
+      return;
+    }
+
+    const uid = getUserId();
+    const loaded = StorageService.loadExpenses(uid);
+    const list = Array.isArray(loaded) ? loaded : [];
+
+    const { year, month } = getSelectedMonth();
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const firstWeekday = new Date(year, month - 1, 1).getDay();
+
+    const totalsByDate = {};
+    for (const exp of asArray(list)){
+      const rawDate = exp?.date ?? exp?.day;
+      const rawAmount = exp?.amount ?? exp?.value;
+      const key = parseDateToKey(rawDate);
+      if (!key) continue;
+
+      const [yy, mm] = key.split("-").map(Number);
+      if (yy !== year || mm !== month) continue;
+      totalsByDate[key] = (totalsByDate[key] || 0) + parseAmount(rawAmount);
+    }
+
+    let maxDaily = 0;
+    for (let day = 1; day <= daysInMonth; day++){
+      const key = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const total = totalsByDate[key] || 0;
+      if (total > maxDaily) maxDaily = total;
+    }
+
+    grid.innerHTML = "";
+
+    for (let i = 0; i < firstWeekday; i++){
+      const empty = document.createElement("div");
+      empty.className = "day-cell empty";
+      empty.setAttribute("aria-hidden", "true");
+      grid.appendChild(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++){
+      const dateKey = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const dayTotal = totalsByDate[dateKey] || 0;
+      const level = maxDaily === 0 ? 0 : Math.max(0, Math.min(4, Math.round((dayTotal / maxDaily) * 4)));
+
+      const cell = document.createElement("div");
+      cell.className = `day-cell h${level}`;
+      cell.setAttribute("role", "gridcell");
+      cell.setAttribute("tabindex", "0");
+      cell.textContent = String(day);
+
+      if (dayTotal > 0){
+        const amt = document.createElement("span");
+        amt.className = "amt";
+        amt.textContent = `₪${dayTotal.toFixed(0)}`;
+        cell.appendChild(amt);
+      }
+
+      const showHint = () => {
+        if (dayTotal === 0){
+          hint.textContent = "No spending recorded.";
+        } else {
+          hint.textContent = `Date: ${dateKey} — Spent: ${dayTotal.toFixed(2)}`;
+        }
+      };
+
+      cell.addEventListener("click", showHint);
+      cell.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          showHint();
+        }
+      });
+
+      grid.appendChild(cell);
+    }
+  }
+
   if (helloUser){
     const name = session.fullName || session.email || "";
     helloUser.textContent = name ? name : "";
@@ -142,18 +554,29 @@
   if (currencySelect) currencySelect.value = currency;
 
   function buildMonthOptions(){
-    const set = new Set(expenses.map(e => monthKey(e.date)));
-    set.add(currentMonthKey());
-    const months = Array.from(set).sort();
-    if (!months.includes(selectedMonth)) selectedMonth = currentMonthKey();
+    if (!monthSelect) return;
 
-    monthSelect.innerHTML = "";
-    for (const m of months){
-      const opt = document.createElement("option");
-      opt.value = m;
-      opt.textContent = m + (m === currentMonthKey() ? ` • ${I18N.t("currentMonthLabel")}` : "");
-      monthSelect.appendChild(opt);
+    const current = currentMonthKey();
+    const monthsSet = new Set([current]);
+
+    asArray(expenses).forEach((e) => {
+      const mk = monthKey(e?.date);
+      if (/^\d{4}-\d{2}$/.test(mk)) monthsSet.add(mk);
+    });
+
+    const months = Array.from(monthsSet).sort((a, b) => b.localeCompare(a));
+
+    if (!months.includes(selectedMonth)){
+      selectedMonth = current;
     }
+
+    monthSelect.innerHTML = months
+      .map((m) => {
+        const tag = m === current ? ` - ${I18N.t("currentMonthLabel")}` : "";
+        return `<option value="${m}">${m}${tag}</option>`;
+      })
+      .join("");
+
     monthSelect.value = selectedMonth;
   }
 
@@ -170,7 +593,8 @@
     if (lockHint) lockHint.textContent = locked ? I18N.t("lockedHint") : "";
 
     [amount, paymentType, category, date, description].forEach(el => { if (el) el.disabled = locked; });
-    if (form) form.querySelector("button[type='submit']").disabled = locked;
+    const submitBtn = form?.querySelector("button[type='submit']");
+    if (submitBtn) submitBtn.disabled = locked;
 
     if (budgetInput) budgetInput.disabled = locked;
     if (btnSaveBudget) btnSaveBudget.disabled = locked;
@@ -207,12 +631,6 @@
   btnLogout?.addEventListener("click", () => {
     Auth.logout();
     window.location.href = "index.html";
-  });
-
-  btnPersonal?.addEventListener("click", () => {
-    closeMenu();
-    const lines = PERSONAL_DETAILS.map(p => `${p.first} ${p.last}\nID: ${p.id}`).join("\n\n---\n\n");
-    alert(lines);
   });
 
   btnReset?.addEventListener("click", () => {
@@ -450,7 +868,7 @@
   function isPossibleDuplicate(normalized){
     const windowMs = 60 * 1000;
     const t = Date.now();
-    return expenses.some(e => {
+    return asArray(expenses).some(e => {
       const same = e.date === normalized.date &&
         e.category === normalized.category &&
         e.paymentType === normalized.paymentType &&
@@ -477,11 +895,11 @@
 
     if (raw.date && monthKey(raw.date) !== selectedMonth){
       raw.date = `${selectedMonth}-01`;
-      date.value = raw.date;
+      if (date) date.value = raw.date;
     }
 
     if (raw.id){
-      const old = expenses.find(e => e.id === raw.id);
+      const old = asArray(expenses).find(e => e.id === raw.id);
       if (old) raw.createdAt = old.createdAt;
     }
 
@@ -495,19 +913,27 @@
       if (!confirm(I18N.t("msgPossibleDup"))) return;
     }
 
-    if (raw.id) expenses = expenses.map(e => e.id === normalized.id ? normalized : e);
-    else expenses.push(normalized);
+    const safeExpenses = asArray(expenses);
+    if (raw.id){
+      expenses = safeExpenses.map(e => e.id === normalized.id ? normalized : e);
+    } else {
+      safeExpenses.push(normalized);
+      expenses = safeExpenses;
+    }
 
     StorageService.saveExpenses(userId, expenses);
     buildMonthOptions();
     resetForm();
     render();
+    document.dispatchEvent(new Event("expenses:changed"));
   }
 
   function onEdit(id){
     if (isLocked()) return;
-    const e = expenses.find(x => x.id === id);
+    const e = asArray(expenses).find(x => x.id === id);
     if (!e) return;
+
+    if (!expenseId || !amount || !date || !paymentType || !category || !description || !btnCancelEdit) return;
 
     expenseId.value = e.id;
     amount.value = String(e.amount);
@@ -523,13 +949,16 @@
   function onDelete(id){
     if (isLocked()) return;
     if (!confirm(I18N.t("msgConfirmDeleteOne"))) return;
-    expenses = expenses.filter(x => x.id !== id);
+    expenses = asArray(expenses).filter(x => x.id !== id);
     StorageService.saveExpenses(userId, expenses);
     buildMonthOptions();
     render();
+    document.dispatchEvent(new Event("expenses:changed"));
   }
 
   function resetForm(){
+    if (!expenseId || !amount || !paymentType || !category || !description || !btnCancelEdit) return;
+
     expenseId.value = "";
     amount.value = "";
     paymentType.value = "";
@@ -541,7 +970,7 @@
   }
 
   function getMonthListOnly(){
-    return expenses.filter(e => monthKey(e.date) === selectedMonth);
+    return asArray(expenses).filter(e => monthKey(e.date) === selectedMonth);
   }
 
   function getFilteredList(){
@@ -555,8 +984,8 @@
       toDate: toDate?.value || ""
     };
 
-    let list = FilterService.applyFilters(base, f);
-    list = FilterService.applySort(list, sortBy?.value || "date_desc");
+    let list = window.FilterService?.applyFilters ? FilterService.applyFilters(base, f) : base;
+    list = window.FilterService?.applySort ? FilterService.applySort(list, sortBy?.value || "date_desc") : (list || []);
     return list;
   }
 
@@ -581,7 +1010,7 @@
   }
 
   function buildCsvTable(list, cur){
-    const sorted = [...list].sort((a,b) => new Date(a.date) - new Date(b.date));
+    const sorted = [...asArray(list)].sort((a,b) => new Date(a.date) - new Date(b.date));
 
     const columnsLtr = [
       { key: "colDate", get: (e) => e.date },
@@ -619,7 +1048,8 @@
   }
 
   function exportCsv(list){
-    if (!list || list.length === 0){
+    const safeList = asArray(list);
+    if (safeList.length === 0){
       alert(I18N.t("msgCsvEmpty"));
       return;
     }
@@ -627,7 +1057,7 @@
     const cur = currency || "ILS";
     const order = ["cash","credit","check"];
 
-    const main = buildCsvTable(list, cur);
+    const main = buildCsvTable(safeList, cur);
 
     const lines = [];
     lines.push("\ufeff" + main.header);
@@ -635,7 +1065,7 @@
     lines.push("");
 
     const groups = new Map(order.map(pt => [pt, []]));
-    for (const e of list){
+    for (const e of safeList){
       if (groups.has(e.paymentType)) groups.get(e.paymentType).push(e);
     }
 
@@ -724,7 +1154,7 @@
   function buildPdfSectionHtml(title, items, cur, totalFmt){
     const cols = pdfColumns();
 
-    const rows = items.map(e => {
+    const rows = asArray(items).map(e => {
       const tds = cols.map(c => `<td>${escapeHtmlPdf(c.get(e))}</td>`).join("");
       return `<tr>${tds}</tr>`;
     }).join("");
@@ -761,7 +1191,8 @@
   }
 
   function exportPdf(list){
-    if (!list || list.length === 0){
+    const safeList = asArray(list);
+    if (safeList.length === 0){
       alert(I18N.t("msgPdfEmpty"));
       return;
     }
@@ -770,7 +1201,7 @@
     const lang = I18N.getLang();
     const cur = currency || "ILS";
 
-    const prep = (arr) => arr
+    const prep = (arr) => asArray(arr)
       .slice()
       .sort((a,b) => new Date(a.date) - new Date(b.date))
       .map(e => {
@@ -778,20 +1209,20 @@
         return { ...e, _cur: cur, _amountOut: UIService.fmtMoney(out, cur) };
       });
 
-    const sumOut = (arr) => arr.reduce((s,e) => {
+    const sumOut = (arr) => asArray(arr).reduce((s,e) => {
       const out = ratesObj ? ApiService.convertAmount(e.amount, ratesObj, cur) : e.amount;
       return s + (Number(out) || 0);
     }, 0);
 
     const sections = [];
 
-    const allItems = prep(list);
-    const allTotal = UIService.fmtMoney(sumOut(list), cur);
+    const allItems = prep(safeList);
+    const allTotal = UIService.fmtMoney(sumOut(safeList), cur);
     sections.push(buildPdfSectionHtml(pdfAllTitle(), allItems, cur, allTotal));
 
     const order = ["cash","credit","check"];
     for (const pt of order){
-      const items = list.filter(e => e.paymentType === pt);
+      const items = safeList.filter(e => e.paymentType === pt);
       if (!items.length) continue;
       const total = UIService.fmtMoney(sumOut(items), cur);
       sections.push(buildPdfSectionHtml(pdfSectionTitle(pt), prep(items), cur, total));
@@ -889,7 +1320,7 @@
   // --- Prediction + Smart insights (unchanged) ---
   function topCategory(list){
     const m = new Map();
-    for (const e of list) m.set(e.category, (m.get(e.category) || 0) + e.amount);
+    for (const e of asArray(list)) m.set(e.category, (m.get(e.category) || 0) + e.amount);
     let best = null;
     for (const [k,v] of m.entries()){
       if (!best || v > best.sum) best = { key: k, sum: v };
@@ -899,7 +1330,7 @@
 
   function topDay(list){
     const m = new Map();
-    for (const e of list) m.set(e.date, (m.get(e.date) || 0) + e.amount);
+    for (const e of asArray(list)) m.set(e.date, (m.get(e.date) || 0) + e.amount);
     let best = null;
     for (const [k,v] of m.entries()){
       if (!best || v > best.sum) best = { key: k, sum: v };
@@ -940,7 +1371,7 @@
     const grid = document.createElement("div");
     grid.className = "kpi-grid";
 
-    for (const k of kpis){
+    for (const k of (kpis || [])){
       const card = document.createElement("div");
       card.className = "kpi";
 
@@ -979,13 +1410,14 @@
   }
 
   function renderSmartInsights(monthList){
+    const safeMonthList = asArray(monthList);
     if (!smartInsightsBox) return;
-    if (!monthList.length){ setPlaceholder(smartInsightsBox); return; }
+    if (!safeMonthList.length){ setPlaceholder(smartInsightsBox); return; }
 
-    const topCat = topCategory(monthList);
-    const topD = topDay(monthList);
+    const topCat = topCategory(safeMonthList);
+    const topD = topDay(safeMonthList);
 
-    const total = monthList.reduce((s,e) => s + e.amount, 0);
+    const total = safeMonthList.reduce((s,e) => s + e.amount, 0);
     const elapsed = Math.max(1, daysElapsedInMonth(selectedMonth));
     const avgDaily = total / elapsed;
 
@@ -999,10 +1431,11 @@
   }
 
   function renderPrediction(monthList, budget){
+    const safeMonthList = asArray(monthList);
     if (!predictionBox) return;
-    if (!monthList.length){ setPlaceholder(predictionBox); return; }
+    if (!safeMonthList.length){ setPlaceholder(predictionBox); return; }
 
-    const total = monthList.reduce((s,e) => s + e.amount, 0);
+    const total = safeMonthList.reduce((s,e) => s + e.amount, 0);
     const totalDays = daysInMonth(selectedMonth);
     const elapsed = Math.max(1, daysElapsedInMonth(selectedMonth));
     const avgDaily = total / elapsed;
@@ -1097,14 +1530,14 @@
     applyLockUI();
 
     const locked = isLocked();
-    const list = getFilteredList();
+    const list = asArray(getFilteredList());
 
     if (emptyState) emptyState.hidden = list.length !== 0;
 
     UIService.renderTable(tbody, list, currency, onEdit, onDelete, ratesObj, locked);
     if (countEl) countEl.textContent = String(list.length);
 
-    const monthTotal = getMonthListOnly().reduce((s,e) => s + e.amount, 0);
+    const monthTotal = asArray(getMonthListOnly()).reduce((s,e) => s + e.amount, 0);
     const budget = StorageService.loadBudget(userId, selectedMonth);
 
     if (monthTotalEl) monthTotalEl.textContent = UIService.fmtMoney(monthTotal, "ILS");
@@ -1128,6 +1561,10 @@
       }
     }
 
+    updateSpendingAlert();
+    updateMonthlyComparison();
+    renderHeatmap();
+
     renderBudgetProgress(monthTotal, budget);
     renderPrediction(getMonthListOnly(), budget);
     renderSmartInsights(getMonthListOnly());
@@ -1135,8 +1572,26 @@
     updateRateInfo(false);
 
     // ✅ charts always visible now
-    ChartService.updateCharts(list);
+    if (window.ChartService?.updateCharts){
+      ChartService.updateCharts(list);
+    }
   }
 
+  document.addEventListener("expenses:changed", renderHeatmap);
+
+  initQuoteFeature();
+  initPersonalDetailsModal();
+  initWelcomeCard();
+  updateSpendingAlert();
+  updateMonthlyComparison();
+  renderHeatmap();
   render();
+
+  }
+
+  if (document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", startApp, { once: true });
+  } else {
+    startApp();
+  }
 })();

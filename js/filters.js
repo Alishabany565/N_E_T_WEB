@@ -13,7 +13,7 @@
   }
 
   function applyFilters(list, f){
-    return list.filter(exp => {
+    return (list || []).filter(exp => {
       if (!matchesSearch(exp, f.search)) return false;
       if (f.payment !== "all" && exp.paymentType !== f.payment) return false;
       if (f.category !== "all" && exp.category !== f.category) return false;
@@ -23,7 +23,7 @@
   }
 
   function applySort(list, sortBy){
-    const copy = [...list];
+    const copy = [...(list || [])];
     switch(sortBy){
       case "date_asc": copy.sort((a,b) => new Date(a.date) - new Date(b.date)); break;
       case "date_desc": copy.sort((a,b) => new Date(b.date) - new Date(a.date)); break;

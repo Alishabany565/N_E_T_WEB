@@ -20,5 +20,22 @@
     return amount * rate;
   }
 
-  window.ApiService = { fetchRates, convertAmount };
+  function fetchFinancialQuote(){
+    return fetch("https://api.quotable.io/random?tags=wisdom|money|success")
+      .then(res => res.json())
+      .then(data => ({
+        content: data.content,
+        author: data.author
+      }))
+      .catch(err => {
+        console.error("Quote API error:", err);
+        return {
+          content: "Track your expenses wisely.",
+          author: "Smart Coach"
+        };
+      });
+  }
+
+  window.fetchFinancialQuote = fetchFinancialQuote;
+  window.ApiService = { fetchRates, convertAmount, fetchFinancialQuote };
 })();
