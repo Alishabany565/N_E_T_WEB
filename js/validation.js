@@ -1,10 +1,25 @@
 (() => {
   const MAX_AMOUNT = 100000;
 
+  function parseLocalDateOnly(dateStr){
+    // Supports: "YYYY-MM-DD" and "YYYY/MM/DD"
+    const s = String(dateStr || "").trim();
+    const m = s.match(/^(\d{4})[-\/](\d{2})[-\/](\d{2})$/);
+    if (m){
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const d = Number(m[3]);
+      return new Date(y, mo - 1, d); // local midnight
+    }
+    // fallback (shouldn't happen if input is type=date)
+    return new Date(s);
+  }
+  
   function isFutureDate(dateStr){
-    const d = new Date(dateStr);
+    const d = parseLocalDateOnly(dateStr);
     const today = new Date();
     today.setHours(0,0,0,0);
+    d.setHours(0,0,0,0);
     return d.getTime() > today.getTime();
   }
 

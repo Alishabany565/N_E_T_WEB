@@ -21,27 +21,52 @@
   }
 
   function fetchFinancialQuote(){
-    const url = `https://api.adviceslip.com/advice?ts=${Date.now()}`;
-    return fetch(url, { cache: "no-store" })
+    // make sure we only use "en" / "ar" / "he"
+    const rawLang = (window.I18N?.getLang ? I18N.getLang() : (document.documentElement.lang || "en"));
+    const lang = String(rawLang).slice(0, 2).toLowerCase();
+    const target = (lang === "ar" || lang === "he") ? lang : "en";
+  
+    const adviceUrl = `https://api.adviceslip.com/advice?ts=${Date.now()}`;
+  
+    async function translateWithMyMemory(text, to){
+      if (!text || to === "en") return text;
+  
+      const params = new URLSearchParams({
+        q: text,
+        langpair: `en|${to}`
+      });
+  
+      const url = `https://api.mymemory.translated.net/get?${params}`;
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("MYMEMORY_HTTP_FAIL");
+      const data = await res.json();
+      const out = data?.responseData?.translatedText;
+      return out || text;
+    }
+  
+    return fetch(adviceUrl, { cache: "no-store" })
       .then(res => {
         if (!res.ok) throw new Error("QUOTE_FETCH_FAIL");
         return res.json();
       })
-      .then(data => ({
-        content: data?.slip?.advice || (window.I18N?.t ? I18N.t("quoteFallbackText") : "Track your expenses wisely."),
-        author: "AdviceSlip"
-      }))
+      .then(async data => {
+        const original =
+          data?.slip?.advice ||
+          (window.I18N?.t ? I18N.t("quoteFallbackText") : "Track your expenses wisely.");
+  
+        const translated = await translateWithMyMemory(original, target);
+  
+        return {
+          content: translated,
+          author: "AdviceSlip" // خليه ثابت زي ما بدك
+        };
+      })
       .catch(err => {
         console.error("Quote API error:", err);
         const fallbackContent = window.I18N?.t ? I18N.t("quoteFallbackText") : "Track your expenses wisely.";
-        const fallbackAuthor = "AdviceSlip";
-        return {
-          content: fallbackContent,
-          author: fallbackAuthor
-        };
+        return { content: fallbackContent, author: "AdviceSlip" };
       });
   }
-
   window.fetchFinancialQuote = fetchFinancialQuote;
   window.ApiService = { fetchRates, convertAmount, fetchFinancialQuote };
 })();

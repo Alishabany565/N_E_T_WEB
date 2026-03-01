@@ -18,8 +18,8 @@
     const btn = document.getElementById("themeToggle");
     if (btn){
       const icon = btn.querySelector("span[aria-hidden='true']");
-      if (icon) icon.textContent = (t === "light") ? "â˜€" : "â˜¾";
-      btn.setAttribute("title", t === "light" ? I18N.t("msgThemeLight") : I18N.t("msgThemeDark"));
+      if (icon) icon.textContent = (t === "light") ? "🌙" : "☀️";
+      btn.setAttribute("title", t === "light" ? I18N.t("msgThemeDark") : I18N.t("msgThemeLight"));
     }
   }
   function toggleTheme(){
@@ -152,12 +152,12 @@
       quoteAuthor.textContent = "";
       if (typeof fetchFinancialQuote !== "function"){
         quoteText.textContent = `"${I18N.t("quoteFallbackText")}"`;
-        quoteAuthor.textContent = "— AdviceSlip";
+        quoteAuthor.textContent = `— ${I18N.t("quoteSource")}`;
         return;
       }
       fetchFinancialQuote().then(q => {
         quoteText.textContent = `"${q.content}"`;
-        quoteAuthor.textContent = "— AdviceSlip";
+        quoteAuthor.textContent = `— ${I18N.t("quoteSource")}`;
       });
     }
 
@@ -345,11 +345,13 @@
       return;
     }
 
-    const today = new Intl.DateTimeFormat(undefined, {
-      weekday: "long",
-      day: "numeric",
-      month: "short",
-      year: "numeric"
+    const lang = (window.I18N?.getLang ? I18N.getLang() : (document.documentElement.lang || "en"));
+
+    const today = new Intl.DateTimeFormat(lang, {
+       weekday: "long",
+       day: "numeric",
+       month: "long",
+       year: "numeric"
     }).format(new Date());
 
     const displayName = getSessionDisplayName();
@@ -1567,7 +1569,7 @@
     const safeMonthList = asArray(monthList);
     if (!smartInsightsBox) return;
     if (!safeMonthList.length){
-      renderPlaceholderCard(smartInsightsBox, I18N.t("smartInsightsTitle"), "", ["insightsTopCategory", "insightsTopDay", "insightsAvgDaily"], "Add expenses to see insights.");
+      renderPlaceholderCard(smartInsightsBox, I18N.t("smartInsightsTitle"), "", ["insightsTopCategory", "insightsTopDay", "insightsAvgDaily"], I18N.t("emptyInsightsMsg"));
       return;
     }
 
@@ -1596,7 +1598,7 @@
     const safeMonthList = asArray(monthList);
     if (!predictionBox) return;
     if (!safeMonthList.length){
-      renderPlaceholderCard(predictionBox, I18N.t("predictionTitle"), I18N.t("predictionSub"), ["predictionAvgDaily", "predictionExpectedTotal", "predictionBudgetDiff"], "Add expenses to see predictions.");
+      renderPlaceholderCard(predictionBox, I18N.t("predictionTitle"), I18N.t("predictionSub"), ["predictionAvgDaily", "predictionExpectedTotal", "predictionBudgetDiff"], I18N.t("emptyPredictionMsg"));
       return;
     }
 
@@ -1752,6 +1754,7 @@
     // ✅ charts always visible now
     if (window.ChartService?.updateCharts){
       const chartList = list.map(e => ({ ...e, amount: toDisplayAmount(e.amount) }));
+      window.__lastChartList = chartList;
       ChartService.updateCharts(chartList);
     }
   }
@@ -1797,6 +1800,17 @@ function initTabs(){
 
     tabList.setAttribute("aria-selected", isList);
     tabInsights.setAttribute("aria-selected", !isList);
+
+    // ✅ Fix: refresh charts when Insights becomes visible
+    if (!isList){
+     requestAnimationFrame(() => {
+     requestAnimationFrame(() => {
+     if (window.ChartService?.updateCharts){
+      ChartService.updateCharts(window.__lastChartList || []);
+     }
+     });
+     });
+    }
   }
 
   tabList.addEventListener("click", () => show("list"));
