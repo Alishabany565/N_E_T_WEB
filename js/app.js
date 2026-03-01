@@ -1,4 +1,4 @@
-﻿// app.js
+// app.js
 (() => {
   function startApp(){
   if (window.A11Y?.init) A11Y.init();
@@ -493,16 +493,18 @@
       ? (diff === 0 ? 0 : 100)
       : Math.round(Math.abs((diff / lastMonthTotal) * 100));
 
-    const absDiff = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(Math.abs(diff));
+    const effCur = getEffectiveCurrency();
+    const diffDisplay = toDisplayAmount(diff);
+    const formattedAbs = UIService.fmtMoney(Math.abs(diffDisplay), effCur);
 
     if (diff > 0){
-      compareEl.textContent = `+${absDiff} (↑ ${pct}%)`;
+      compareEl.textContent = `+${formattedAbs} (↑ ${pct}%)`;
       compareEl.classList.add("compare-up");
       return;
     }
 
     if (diff < 0){
-      compareEl.textContent = `-${absDiff} (↓ ${pct}%)`;
+      compareEl.textContent = `-${formattedAbs} (↓ ${pct}%)`;
       compareEl.classList.add("compare-down");
       return;
     }
@@ -524,6 +526,33 @@
       .replace(/[^\d.-]/g, "");
     const n = Number(cleaned);
     return Number.isFinite(n) ? n : 0;
+  }
+
+  function getEffectiveCurrency(){
+    const cur = currency || "ILS";
+    if (cur === "ILS") return "ILS";
+    if (!ratesObj || !ratesObj.rates) return "ILS";
+    const rate = ratesObj.rates[cur];
+    if (!Number.isFinite(rate) || rate <= 0) return "ILS";
+    return cur;
+  }
+
+  function toDisplayAmount(ilsAmount){
+    const base = Number(ilsAmount) || 0;
+    if (!Number.isFinite(base)) return 0;
+    const cur = getEffectiveCurrency();
+    if (cur === "ILS") return base;
+    return ApiService.convertAmount(base, ratesObj, cur);
+  }
+
+  function fromDisplayToBase(displayAmount){
+    const num = Number(displayAmount) || 0;
+    if (!Number.isFinite(num)) return 0;
+    const cur = getEffectiveCurrency();
+    if (cur === "ILS") return num;
+    const rate = ratesObj?.rates?.[cur];
+    if (!rate || !Number.isFinite(rate) || rate === 0) return num;
+    return num / rate;
   }
 
   function parseDateToKey(dateString){
@@ -613,10 +642,12 @@
       grid.appendChild(empty);
     }
 
+    const effCur = getEffectiveCurrency();
+
     for (let day = 1; day <= daysInMonth; day++){
       const dateKey = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-      const dayTotal = totalsByDate[dateKey] || 0;
-      const level = maxDaily === 0 ? 0 : Math.max(0, Math.min(4, Math.round((dayTotal / maxDaily) * 4)));
+      const dayTotalBase = totalsByDate[dateKey] || 0;
+      const level = maxDaily === 0 ? 0 : Math.max(0, Math.min(4, Math.round((dayTotalBase / maxDaily) * 4)));
 
       const cell = document.createElement("div");
       cell.className = `day-cell h${level}`;
@@ -624,20 +655,22 @@
       cell.setAttribute("tabindex", "0");
       cell.textContent = String(day);
 
-      if (dayTotal > 0){
+      if (dayTotalBase > 0){
         const amt = document.createElement("span");
         amt.className = "amt";
-        amt.textContent = `₪${dayTotal.toFixed(0)}`;
+        const displayAmount = toDisplayAmount(dayTotalBase);
+        amt.textContent = UIService.fmtMoney(displayAmount, effCur);
         cell.appendChild(amt);
       }
 
       const showHint = () => {
-        if (dayTotal === 0){
+        if (dayTotalBase === 0){
           hint.textContent = I18N.t("heatmapNoSpending");
         } else {
+          const displayAmount = toDisplayAmount(dayTotalBase);
           hint.textContent = I18N.t("heatmapDateSpent")
             .replace("{date}", dateKey)
-            .replace("{amount}", dayTotal.toFixed(2));
+            .replace("{amount}", UIService.fmtMoney(displayAmount, effCur));
         }
       };
 
@@ -867,12 +900,14 @@
   // budget
   btnSaveBudget?.addEventListener("click", () => {
     if (isLocked()) return;
-    const v = Number(budgetInput?.value);
-    if (!Number.isFinite(v) || v < 0){
+    const raw = budgetInput?.value;
+    const parsed = parseNumericText(raw);
+    if (!Number.isFinite(parsed) || parsed < 0){
       alert(I18N.t("msgBudgetInvalid"));
       return;
     }
-    StorageService.saveBudget(userId, selectedMonth, v);
+    const valueIls = fromDisplayToBase(parsed);
+    StorageService.saveBudget(userId, selectedMonth, valueIls);
     render();
   });
 
@@ -1169,7 +1204,7 @@
       return;
     }
 
-    const cur = currency || "ILS";
+    const cur = getEffectiveCurrency();
     const order = ["cash","credit","check"];
 
     const main = buildCsvTable(safeList, cur);
@@ -1311,7 +1346,7 @@
 
     const rtl = (I18N.getLang() === "ar" || I18N.getLang() === "he");
     const lang = I18N.getLang();
-    const cur = currency || "ILS";
+    const cur = getEffectiveCurrency();
 
     const prep = (arr) => asArray(arr)
       .slice()
@@ -1451,7 +1486,14 @@
   }
 
   function clearBox(box){ if (box) box.innerHTML = ""; }
-  function setPlaceholder(box){ if (box){ clearBox(box); box.textContent = "â€”"; } }
+  function setPlaceholder(box){ if (box){ clearBox(box); box.textContent = "\u2014"; } }
+
+  /** Renders the same card structure as when data exists, but with — for values and an optional footer hint (no-expenses state). */
+  function renderPlaceholderCard(box, headerTitle, headerSub, kpiLabelKeys, footerHint){
+    if (!box) return;
+    const kpis = (kpiLabelKeys || []).map(function(labelKey){ return { label: I18N.t(labelKey), value: "\u2014", meta: "" }; });
+    renderKpis(box, headerTitle, headerSub, null, kpis, footerHint || null);
+  }
 
   function renderKpis(box, headerTitle, headerSub, badge, kpis, footerText){
     if (!box) return;
@@ -1524,19 +1566,27 @@
   function renderSmartInsights(monthList){
     const safeMonthList = asArray(monthList);
     if (!smartInsightsBox) return;
-    if (!safeMonthList.length){ setPlaceholder(smartInsightsBox); return; }
+    if (!safeMonthList.length){
+      renderPlaceholderCard(smartInsightsBox, I18N.t("smartInsightsTitle"), "", ["insightsTopCategory", "insightsTopDay", "insightsAvgDaily"], "Add expenses to see insights.");
+      return;
+    }
 
     const topCat = topCategory(safeMonthList);
     const topD = topDay(safeMonthList);
 
-    const total = safeMonthList.reduce((s,e) => s + e.amount, 0);
+    const totalBase = safeMonthList.reduce((s,e) => s + e.amount, 0);
     const elapsed = Math.max(1, daysElapsedInMonth(selectedMonth));
-    const avgDaily = total / elapsed;
+    const avgDailyBase = totalBase / elapsed;
+
+    const effCur = getEffectiveCurrency();
+    const topCatDisplay = topCat ? toDisplayAmount(topCat.sum) : 0;
+    const topDayDisplay = topD ? toDisplayAmount(topD.sum) : 0;
+    const avgDailyDisplay = toDisplayAmount(avgDailyBase);
 
     const kpis = [
-      { label: I18N.t("insightsTopCategory"), value: UIService.fmtMoney(topCat ? topCat.sum : 0, "ILS"), meta: topCat ? UIService.labelCategory(topCat.key) : "â€”" },
-      { label: I18N.t("insightsTopDay"), value: topD ? topD.key : "â€”", meta: topD ? UIService.fmtMoney(topD.sum, "ILS") : "" },
-      { label: I18N.t("insightsAvgDaily"), value: UIService.fmtMoney(avgDaily, "ILS"), meta: "" }
+      { label: I18N.t("insightsTopCategory"), value: UIService.fmtMoney(topCatDisplay, effCur), meta: topCat ? UIService.labelCategory(topCat.key) : "â€”" },
+      { label: I18N.t("insightsTopDay"), value: topD ? topD.key : "â€”", meta: topD ? UIService.fmtMoney(topDayDisplay, effCur) : "" },
+      { label: I18N.t("insightsAvgDaily"), value: UIService.fmtMoney(avgDailyDisplay, effCur), meta: "" }
     ];
 
     renderKpis(smartInsightsBox, I18N.t("smartInsightsTitle"), "", null, kpis, null);
@@ -1545,34 +1595,45 @@
   function renderPrediction(monthList, budget){
     const safeMonthList = asArray(monthList);
     if (!predictionBox) return;
-    if (!safeMonthList.length){ setPlaceholder(predictionBox); return; }
+    if (!safeMonthList.length){
+      renderPlaceholderCard(predictionBox, I18N.t("predictionTitle"), I18N.t("predictionSub"), ["predictionAvgDaily", "predictionExpectedTotal", "predictionBudgetDiff"], "Add expenses to see predictions.");
+      return;
+    }
 
-    const total = safeMonthList.reduce((s,e) => s + e.amount, 0);
+    const totalBase = safeMonthList.reduce((s,e) => s + e.amount, 0);
     const totalDays = daysInMonth(selectedMonth);
     const elapsed = Math.max(1, daysElapsedInMonth(selectedMonth));
-    const avgDaily = total / elapsed;
-    const expectedTotal = avgDaily * totalDays;
+    const avgDailyBase = totalBase / elapsed;
+    const expectedTotalBase = avgDailyBase * totalDays;
 
-    const diff = (budget > 0) ? (budget - expectedTotal) : null;
+    const diffBase = (budget > 0) ? (budget - expectedTotalBase) : null;
+
+    const effCur = getEffectiveCurrency();
+    const avgDailyDisplay = toDisplayAmount(avgDailyBase);
+    const expectedTotalDisplay = toDisplayAmount(expectedTotalBase);
+    const diffDisplay = diffBase != null ? toDisplayAmount(diffBase) : null;
 
     let badge = null;
     let footer = null;
 
     if (budget > 0){
-      const pct = (total / budget) * 100;
+      const pct = (totalBase / budget) * 100;
       if (pct >= 100) badge = { kind:"danger", text: I18N.t("badgeExceeded") };
       else if (pct >= 80) badge = { kind:"warn", text: I18N.t("badgeNearBudget") };
       else badge = { kind:"ok", text: I18N.t("badgeWithinBudget") };
 
-      footer = diff >= 0
-        ? `${I18N.t("footerLikelyWithin")} ${UIService.fmtMoney(diff, "ILS")}.`
-        : `${I18N.t("footerLikelyExceed")} ${UIService.fmtMoney(Math.abs(diff), "ILS")}.`;
+      if (diffDisplay != null){
+        const absDiffDisplay = Math.abs(diffDisplay);
+        footer = diffDisplay >= 0
+          ? `${I18N.t("footerLikelyWithin")} ${UIService.fmtMoney(absDiffDisplay, effCur)}.`
+          : `${I18N.t("footerLikelyExceed")} ${UIService.fmtMoney(absDiffDisplay, effCur)}.`;
+      }
     }
 
     const kpis = [
-      { label: I18N.t("predictionAvgDaily"), value: UIService.fmtMoney(avgDaily, "ILS"), meta: `${elapsed}/${totalDays} ${I18N.t("metaDaysSoFar")}` },
-      { label: I18N.t("predictionExpectedTotal"), value: UIService.fmtMoney(expectedTotal, "ILS"), meta: I18N.t("metaIfPaceContinues") },
-      { label: I18N.t("predictionBudgetDiff"), value: (budget>0) ? UIService.fmtMoney(diff, "ILS") : "â€”", meta: (budget>0) ? I18N.t("metaBudgetMinusExpected") : I18N.t("metaSetBudgetToCompare") }
+      { label: I18N.t("predictionAvgDaily"), value: UIService.fmtMoney(avgDailyDisplay, effCur), meta: `${elapsed}/${totalDays} ${I18N.t("metaDaysSoFar")}` },
+      { label: I18N.t("predictionExpectedTotal"), value: UIService.fmtMoney(expectedTotalDisplay, effCur), meta: I18N.t("metaIfPaceContinues") },
+      { label: I18N.t("predictionBudgetDiff"), value: (budget>0 && diffDisplay != null) ? UIService.fmtMoney(diffDisplay, effCur) : "â€”", meta: (budget>0) ? I18N.t("metaBudgetMinusExpected") : I18N.t("metaSetBudgetToCompare") }
     ];
 
     renderKpis(predictionBox, I18N.t("predictionTitle"), I18N.t("predictionSub"), badge, kpis, footer);
@@ -1647,27 +1708,31 @@
 
     if (emptyState) emptyState.hidden = list.length !== 0;
 
-    UIService.renderTable(tbody, list, currency, onEdit, onDelete, ratesObj, locked);
+    const effCur = getEffectiveCurrency();
+
+    UIService.renderTable(tbody, list, effCur, onEdit, onDelete, ratesObj, locked);
     if (countEl) countEl.textContent = String(list.length);
 
-    const monthTotal = asArray(getMonthListOnly()).reduce((s,e) => s + e.amount, 0);
-    const budget = StorageService.loadBudget(userId, selectedMonth);
+    const monthTotalBase = asArray(getMonthListOnly()).reduce((s,e) => s + e.amount, 0);
+    const budgetBase = StorageService.loadBudget(userId, selectedMonth);
 
-    if (monthTotalEl) monthTotalEl.textContent = UIService.fmtMoney(monthTotal, "ILS");
+    const monthTotalDisplay = toDisplayAmount(monthTotalBase);
+    const budgetDisplay = budgetBase ? toDisplayAmount(budgetBase) : 0;
 
-    const remaining = (budget > 0) ? (budget - monthTotal) : 0;
-    if (monthRemainingEl) monthRemainingEl.textContent = budget > 0 ? UIService.fmtMoney(remaining, "ILS") : "â€”";
+    if (monthTotalEl) monthTotalEl.textContent = UIService.fmtMoney(monthTotalDisplay, effCur);
 
-    const converted = ratesObj ? ApiService.convertAmount(monthTotal, ratesObj, currency) : monthTotal;
-    if (displayTotalEl) displayTotalEl.textContent = UIService.fmtMoney(converted, currency);
+    const remainingDisplay = (budgetDisplay > 0) ? (budgetDisplay - monthTotalDisplay) : 0;
+    if (monthRemainingEl) monthRemainingEl.textContent = budgetDisplay > 0 ? UIService.fmtMoney(remainingDisplay, effCur) : "â€”";
 
-    if (budgetInput) budgetInput.value = budget ? String(budget) : "";
+    if (displayTotalEl) displayTotalEl.textContent = UIService.fmtMoney(monthTotalDisplay, effCur);
+
+    if (budgetInput) budgetInput.value = budgetDisplay ? String(budgetDisplay.toFixed(2)) : "";
 
     if (budgetStatus){
-      budgetStatus.textContent = UIService.budgetMessage(monthTotal, budget);
+      budgetStatus.textContent = UIService.budgetMessage(monthTotalBase, budgetBase);
       budgetStatus.style.borderColor = "var(--border)";
-      if (budget > 0){
-        const pct = (monthTotal / budget) * 100;
+      if (budgetBase > 0){
+        const pct = (monthTotalBase / budgetBase) * 100;
         if (pct >= 100) budgetStatus.style.borderColor = "rgba(255,77,79,.6)";
         else if (pct >= 80) budgetStatus.style.borderColor = "rgba(245,166,35,.6)";
         else budgetStatus.style.borderColor = "rgba(34,197,94,.6)";
@@ -1678,15 +1743,16 @@
     updateMonthlyComparison();
     renderHeatmap();
 
-    renderBudgetProgress(monthTotal, budget);
-    renderPrediction(getMonthListOnly(), budget);
+    renderBudgetProgress(monthTotalBase, budgetBase);
+    renderPrediction(getMonthListOnly(), budgetBase);
     renderSmartInsights(getMonthListOnly());
 
     updateRateInfo(false);
 
-    // âœ… charts always visible now
+    // ✅ charts always visible now
     if (window.ChartService?.updateCharts){
-      ChartService.updateCharts(list);
+      const chartList = list.map(e => ({ ...e, amount: toDisplayAmount(e.amount) }));
+      ChartService.updateCharts(chartList);
     }
   }
 

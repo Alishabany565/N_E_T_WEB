@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   function fmtMoney(v, currency){
     const n = Number(v) || 0;
     const locale = document.documentElement.lang || "en";
@@ -58,11 +58,21 @@
     for (const e of (list || [])){
       const tr = document.createElement("tr");
 
-      const amountConverted = ratesObj ? ApiService.convertAmount(e.amount, ratesObj, currency) : e.amount;
-      const amountHtml = `
-        <div>${escapeHtml(fmtMoney(e.amount, "ILS"))}</div>
-        <div class="hint">(${escapeHtml(fmtMoney(amountConverted, currency))})</div>
-      `;
+      const baseAmount = Number(e.amount) || 0;
+      let displayCurrency = currency || "ILS";
+      let displayAmount = baseAmount;
+
+      if (displayCurrency !== "ILS"){
+        const rate = ratesObj?.rates?.[displayCurrency];
+        if (ratesObj && ratesObj.rates && Number.isFinite(rate) && rate > 0){
+          displayAmount = ApiService.convertAmount(baseAmount, ratesObj, displayCurrency);
+        } else {
+          displayCurrency = "ILS";
+          displayAmount = baseAmount;
+        }
+      }
+
+      const amountHtml = escapeHtml(fmtMoney(displayAmount, displayCurrency));
 
       const desc = e.description ? escapeHtml(e.description) : "";
 
