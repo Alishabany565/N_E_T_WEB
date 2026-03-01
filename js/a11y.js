@@ -1,16 +1,14 @@
 (() => {
   const KEY_BIG = "et_a11y_big_v2";
   const KEY_CON = "et_a11y_con_v2";
-  const KEY_UND = "et_a11y_und_v2";
 
   function apply(){
     const big = localStorage.getItem(KEY_BIG) === "1";
     const con = localStorage.getItem(KEY_CON) === "1";
-    const und = localStorage.getItem(KEY_UND) === "1";
 
+    document.documentElement.style.setProperty("--a11y-font-scale", big ? "1.15" : "1");
     document.body.classList.toggle("a11y-bigtext", big);
     document.body.classList.toggle("a11y-contrast", con);
-    document.body.classList.toggle("a11y-underline", und);
   }
 
   function setFlag(key, val){
@@ -23,12 +21,9 @@
       setFlag(KEY_BIG, localStorage.getItem(KEY_BIG) !== "1");
     } else if (kind === "contrast"){
       setFlag(KEY_CON, localStorage.getItem(KEY_CON) !== "1");
-    } else if (kind === "underline"){
-      setFlag(KEY_UND, localStorage.getItem(KEY_UND) !== "1");
     } else if (kind === "reset"){
       setFlag(KEY_BIG, false);
       setFlag(KEY_CON, false);
-      setFlag(KEY_UND, false);
     }
   }
 
