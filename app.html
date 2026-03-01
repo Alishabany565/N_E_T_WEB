@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Expense Tracker</title>
+  <title data-i18n="appTitle" data-i18n-doc-title="appTitle">Expense Tracker</title>
   <link rel="stylesheet" href="css/app.css" />
 </head>
 
@@ -15,6 +15,9 @@
     class="a11y-fab"
     type="button"
     aria-label="Accessibility"
+    data-i18n-aria="accessibility"
+    title="Accessibility"
+    data-i18n-title="accessibility"
     aria-expanded="false"
     aria-controls="a11yPanel"
   ><span aria-hidden="true">♿</span></button>
@@ -22,7 +25,7 @@
   <div id="a11yPanel" class="a11y-panel" hidden>
     <div class="a11y-panel-head">
       <h3 data-i18n="accessibility">Accessibility</h3>
-      <button id="a11yClose" class="a11y-close" type="button">x</button>
+      <button id="a11yClose" class="a11y-close" type="button" aria-label="Close" data-i18n-aria="close">x</button>
     </div>
     <div class="a11y-panel-body">
       <button class="a11y-opt" type="button" data-a11y="bigtext" data-i18n="biggerText">Bigger text</button>
@@ -32,7 +35,7 @@
   </div>
 
   <header class="topbar">
-    <div class="brand" aria-label="Expense Tracker">
+    <div class="brand" aria-label="Expense Tracker" data-i18n-aria="appTitle">
       <div class="logo" aria-hidden="true">$</div>
       <div>
         <div class="title" data-i18n="appTitle">Expense Tracker</div>
@@ -42,13 +45,13 @@
 
     <div class="right-actions">
       <label class="sr-only" for="langSelect" data-i18n="language">Language</label>
-      <select id="langSelect" class="select" aria-label="Language">
-        <option value="en">English</option>
-        <option value="ar">العربية</option>
-        <option value="he">עברית</option>
+      <select id="langSelect" class="select" aria-label="Language" data-i18n-aria="language">
+        <option value="en" data-i18n="langEnglish">English</option>
+        <option value="ar" data-i18n="langArabic">العربية</option>
+        <option value="he" data-i18n="langHebrew">עברית</option>
       </select>
 
-      <button id="themeToggle" class="icon-btn" type="button" aria-label="Theme" title="Theme">
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Theme" data-i18n-aria="theme" title="Theme">
         <span aria-hidden="true">☾</span>
       </button>
 
@@ -62,7 +65,7 @@
         data-i18n="menu"
       >Menu</button>
 
-      <div id="userMenu" class="menu" hidden role="menu" aria-label="User menu">
+      <div id="userMenu" class="menu" hidden role="menu" aria-label="User menu" data-i18n-aria="userMenuLabel">
         <button id="btnPersonal" class="menu-item" type="button" role="menuitem" data-i18n="personalDetails">Personal Details</button>
         <button id="btnShortcuts" class="menu-item" type="button" role="menuitem" data-i18n="shortcutsTitle">Keyboard shortcuts</button>
         <div class="menu-sep" aria-hidden="true"></div>
@@ -74,10 +77,10 @@
 
   <main id="main" class="container">
     <div class="layout">
-      <aside class="sidebar" aria-label="Navigation">
+      <aside class="sidebar" aria-label="Navigation" data-i18n-aria="navigation">
         <div class="sidebar-pane">
-          <div class="sidebar-title">Dashboard</div>
-          <div class="tabs sidebar-tabs" role="tablist" aria-label="Dashboard tabs">
+          <div class="sidebar-title" data-i18n="dashboard">Dashboard</div>
+          <div class="tabs sidebar-tabs" role="tablist" aria-label="Dashboard tabs" data-i18n-aria="dashboardTabs">
             <button
               id="tabList"
               class="tab is-active"
@@ -98,17 +101,17 @@
         </div>
 
         <div class="sidebar-pane sidebar-note">
-          <div class="sidebar-chip">Monthly Flow</div>
-          <p>Track spending, budget, and trends in one place.</p>
+          <div class="sidebar-chip" data-i18n="monthlyFlow">Monthly Flow</div>
+          <p data-i18n="monthlyFlowDesc">Track spending, budget, and trends in one place.</p>
         </div>
       </aside>
 
       <div class="main">
-        <section class="card welcome-card" aria-label="Welcome">
+        <section class="card welcome-card" aria-label="Welcome" data-i18n-aria="welcome">
           <div class="welcome-row">
             <div>
-              <h1 id="welcomeTitle" class="welcome-title">Hi, Tala 👋</h1>
-              <p id="welcomeSub" class="welcome-sub">Ready to track your spending today?</p>
+              <h1 id="welcomeTitle" class="welcome-title" data-i18n="welcomeTitleGuest">Hi, Tala 👋</h1>
+              <p id="welcomeSub" class="welcome-sub" data-i18n="welcomeSub">Ready to track your spending today?</p>
             </div>
             <div class="welcome-meta">
               <span id="welcomeDate" class="welcome-date"></span>
@@ -120,14 +123,14 @@
           <div class="alert-left">
             <div id="alertIcon" class="alert-icon">⚠️</div>
             <div>
-              <div id="alertTitle" class="alert-title">Alert</div>
-              <div id="alertMsg" class="alert-msg">Message</div>
+              <div id="alertTitle" class="alert-title" data-i18n="alertDefaultTitle">Alert</div>
+              <div id="alertMsg" class="alert-msg" data-i18n="alertDefaultMsg">Message</div>
             </div>
           </div>
         </section>
 
         <div class="top-row">
-          <section class="card insights-card" aria-label="Insights summary">
+          <section class="card insights-card" aria-label="Insights summary" data-i18n-aria="insightsSummary">
             <div class="insight-box">
               <div id="predictionBox">—</div>
             </div>
@@ -150,7 +153,7 @@
                 <span class="hint" id="budgetPctLabel">—</span>
                 <span class="hint" id="budgetProgressHint"></span>
               </div>
-              <div class="progress" aria-label="Budget progress">
+              <div class="progress" aria-label="Budget progress" data-i18n-aria="budgetProgress">
                 <div id="budgetBar" class="progress-bar"></div>
               </div>
             </div>
@@ -165,10 +168,10 @@
                   </div>
                 </div>
 
-                <div id="currencyTiles" class="currency-tiles" role="radiogroup" aria-label="Currency"></div>
+                <div id="currencyTiles" class="currency-tiles" role="radiogroup" aria-label="Currency" data-i18n-aria="currency"></div>
 
                 <label class="sr-only" for="currency" data-i18n="showIn">Show amounts in:</label>
-                <select id="currency" class="select sr-only" aria-label="Currency">
+                <select id="currency" class="select sr-only" aria-label="Currency" data-i18n-aria="currency">
                   <option value="ILS">ILS</option>
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -184,10 +187,10 @@
         <div id="panelList" class="panel">
         <section class="card quote-card">
           <div class="quote-header">
-            <h2>💡 Financial Quote</h2>
-            <button id="btnRefreshQuote" class="btn small" type="button">Refresh</button>
+            <h2 data-i18n="quoteTitle">?? Financial Quote</h2>
+            <button id="btnRefreshQuote" class="btn small" type="button" data-i18n="refreshQuote">Refresh</button>
           </div>
-          <p id="quoteText" class="quote-text">Loading...</p>
+          <p id="quoteText" class="quote-text" data-i18n="quoteLoading">Loading...</p>
           <span id="quoteAuthor" class="quote-author"></span>
         </section>
 
@@ -275,7 +278,7 @@
               <span class="filters-arrow" aria-hidden="true">+</span>
             </summary>
             <div class="filters-details-body">
-              <p class="hint">Open advanced filters for payment type, category, date range, and sorting.</p>
+              <p class="hint" data-i18n="filtersHint">Open advanced filters for payment type, category, date range, and sorting.</p>
               <button
                 id="btnOpenFilters"
                 class="btn"
@@ -294,7 +297,7 @@
             </div>
           </div>
 
-          <div class="metrics-grid" aria-label="Summary metrics">
+          <div class="metrics-grid" aria-label="Summary metrics" data-i18n-aria="summaryMetrics">
             <article class="metric-card metric-one">
               <div class="metric-icon" aria-hidden="true">#</div>
               <div class="metric-copy">
@@ -328,8 +331,8 @@
             </article>
           </div>
 
-          <div class="month-compare card mini-card" aria-label="Monthly comparison">
-            <div class="compare-title">Compared to last month</div>
+          <div class="month-compare card mini-card" aria-label="Monthly comparison" data-i18n-aria="monthlyComparison">
+            <div class="compare-title" data-i18n="compareTitle">Compared to last month</div>
             <div id="compareValue" class="compare-value">—</div>
           </div>
 
@@ -337,7 +340,7 @@
             <div id="emptyState" class="empty" hidden data-i18n="emptyState">No expenses yet. Add your first one.</div>
 
             <div class="table-wrap table-modern">
-              <table class="table" aria-label="Expenses table">
+              <table class="table" aria-label="Expenses table" data-i18n-aria="expensesTable">
                 <thead>
                   <tr>
                     <th data-i18n="thDate">Date</th>
@@ -377,37 +380,37 @@
               </div>
             </div>
 
-            <section class="card heatmap-card" aria-label="Spending heatmap">
+            <section class="card heatmap-card" aria-label="Spending heatmap" data-i18n-aria="heatmapTitle">
               <div class="heatmap-head">
                 <div>
-                  <h2>📅 Spending Heatmap</h2>
-                  <p class="muted">Darker day = higher spending</p>
+                  <h2 data-i18n="heatmapTitle">?? Spending Heatmap</h2>
+                  <p class="muted" data-i18n="heatmapSubtitle">Darker day = higher spending</p>
                 </div>
 
                 <div class="heatmap-legend">
-                  <span class="legend-label">Less</span>
+                  <span class="legend-label" data-i18n="heatmapLess">Less</span>
                   <span class="legend-box h0"></span>
                   <span class="legend-box h1"></span>
                   <span class="legend-box h2"></span>
                   <span class="legend-box h3"></span>
                   <span class="legend-box h4"></span>
-                  <span class="legend-label">More</span>
+                  <span class="legend-label" data-i18n="heatmapMore">More</span>
                 </div>
               </div>
 
               <div id="heatmapGrid" class="heatmap-grid" role="grid"></div>
-              <div id="heatmapHint" class="heatmap-hint muted">Click a day to see total.</div>
+              <div id="heatmapHint" class="heatmap-hint muted" data-i18n="heatmapHintDefault">Click a day to see total.</div>
             </section>
           </div>
         </section>
       </div>
     </div>
 
-    <div id="filtersModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Filters">
+    <div id="filtersModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Filters" data-i18n-aria="filters">
       <div class="modal-card modal-filters">
         <div class="modal-head">
           <h2 data-i18n="filters">Filters</h2>
-          <button id="filtersClose" class="icon-btn" type="button" aria-label="Close">x</button>
+          <button id="filtersClose" class="icon-btn" type="button" aria-label="Close" data-i18n-aria="close">x</button>
         </div>
 
         <div class="filters-form">
@@ -465,11 +468,11 @@
       </div>
     </div>
 
-    <div id="shortcutsModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Shortcuts">
+    <div id="shortcutsModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Shortcuts" data-i18n-aria="shortcutsTitle">
       <div class="modal-card">
         <div class="modal-head">
           <h2 data-i18n="shortcutsTitle">Keyboard shortcuts</h2>
-          <button id="shortcutsClose" class="icon-btn" type="button" aria-label="Close">x</button>
+          <button id="shortcutsClose" class="icon-btn" type="button" aria-label="Close" data-i18n-aria="close">x</button>
         </div>
         <ul class="shortcuts">
           <li><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>F</kbd> - <span data-i18n="scSearch">Focus search</span></li>
@@ -480,15 +483,39 @@
       </div>
     </div>
 
-    <div id="personalModal" class="modal" hidden>
+    <div id="personalModal" class="modal personal-modal" hidden role="dialog" aria-modal="true" aria-label="Personal Details" data-i18n-aria="personalDetails">
       <div class="modal-overlay"></div>
-      <div class="modal-content">
-        <button id="closePersonalModal" class="modal-close" type="button" aria-label="Close">×</button>
-        <h2>Personal Details</h2>
+      <div class="modal-content" role="document">
+        <button id="closePersonalModal" class="modal-close" type="button" aria-label="Close" data-i18n-aria="close">&times;</button>
+        <header class="personal-head">
+          <div class="personal-heading">
+            <h2 class="personal-title" data-i18n="personalDetails">Personal Details</h2>
+            <p class="personal-subtitle" data-i18n="personalDetailsSubtitle">Shared profiles in this workspace.</p>
+          </div>
+        </header>
         <div class="personal-list">
-          <p><strong>Ali Shabany</strong><br>ID: 212428569</p>
-          <hr />
-          <p><strong>Tala Jabaren</strong><br>ID: 327605937</p>
+          <article class="person-card" data-person-id="212428569">
+            <span class="person-avatar" aria-hidden="true">A</span>
+            <div class="person-main">
+              <p class="person-name">Ali Shabany</p>
+              <div class="person-id-line">
+                <span class="person-id-label" data-i18n="idLabel">ID</span>
+                <span class="person-id-value" data-person-id-mask></span>
+                <button class="btn small person-copy" type="button" data-copy-person-id="212428569" data-i18n="copyId">Copy</button>
+              </div>
+            </div>
+          </article>
+          <article class="person-card" data-person-id="327605937">
+            <span class="person-avatar" aria-hidden="true">T</span>
+            <div class="person-main">
+              <p class="person-name">Tala Jabaren</p>
+              <div class="person-id-line">
+                <span class="person-id-label" data-i18n="idLabel">ID</span>
+                <span class="person-id-value" data-person-id-mask></span>
+                <button class="btn small person-copy" type="button" data-copy-person-id="327605937" data-i18n="copyId">Copy</button>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </div>
@@ -507,3 +534,8 @@
   <script src="js/app.js"></script>
 </body>
 </html>
+
+
+
+
+

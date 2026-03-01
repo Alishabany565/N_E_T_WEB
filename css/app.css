@@ -1197,56 +1197,189 @@ select:focus,
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 16px;
   z-index: 1000;
+  --personal-motion: 220ms;
 }
 
 #personalModal .modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(7, 10, 18, 0.64);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity var(--personal-motion) ease;
 }
 
 #personalModal .modal-content {
   position: relative;
-  background: var(--card-bg, #1e2436);
-  color: var(--text);
-  padding: 30px;
-  border-radius: 20px;
-  width: 400px;
-  max-width: 90%;
+  width: min(520px, 92vw);
+  border-radius: 22px;
   border: 1px solid var(--border);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  animation: personalFadeIn 0.3s ease;
+  background:
+    radial-gradient(130% 120% at 100% 0, rgba(249, 168, 212, 0.18), transparent 58%),
+    radial-gradient(120% 140% at 0 100%, rgba(125, 211, 252, 0.16), transparent 60%),
+    color-mix(in srgb, var(--surface-strong) 88%, transparent);
+  box-shadow: 0 24px 52px rgba(5, 9, 20, 0.52);
+  padding: 22px;
+  text-align: start;
+  direction: inherit;
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+  transition: transform var(--personal-motion) cubic-bezier(0.22, 1, 0.36, 1), opacity var(--personal-motion) ease;
+}
+
+#personalModal.is-open .modal-overlay {
+  opacity: 1;
+}
+
+#personalModal.is-open .modal-content {
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }
 
 #personalModal .modal-close {
   position: absolute;
-  top: 12px;
-  right: 16px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
+  inset-block-start: 14px;
+  inset-inline-end: 14px;
+  inline-size: 34px;
+  block-size: 34px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-strong) 84%, transparent);
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
-html[data-theme="light"] #personalModal .modal-close {
-  color: #0f172a;
+#personalModal .modal-close:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--primary) 68%, #ffffff 32%);
+  box-shadow: 0 10px 24px rgba(21, 38, 70, 0.24);
+  background: color-mix(in srgb, var(--surface-strong) 92%, transparent);
 }
 
-#personalModal .personal-list p {
-  margin: 15px 0;
+#personalModal .personal-head {
+  margin-bottom: 16px;
+  padding-inline-end: 44px;
 }
 
-@keyframes personalFadeIn {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
+#personalModal .personal-title {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+#personalModal .personal-subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+#personalModal .personal-list {
+  display: grid;
+  gap: 12px;
+}
+
+#personalModal .person-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  padding: 12px 14px;
+}
+
+#personalModal .person-avatar {
+  inline-size: 40px;
+  block-size: 40px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--primary) 38%, var(--border));
+  background: linear-gradient(140deg, rgba(125, 211, 252, 0.34), rgba(249, 168, 212, 0.26));
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+#personalModal .person-main {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 4px;
+  text-align: start;
+}
+
+#personalModal .person-name {
+  margin: 0;
+  font-weight: 800;
+  font-size: 0.98rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#personalModal .person-id-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+#personalModal .person-id-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+#personalModal .person-copy {
+  padding: 5px 10px;
+  min-width: 66px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+}
+
+#personalModal .person-copy:disabled {
+  opacity: 0.72;
+  cursor: default;
+}
+
+[dir="rtl"] #personalModal .person-id-line {
+  justify-content: flex-start;
+}
+
+@media (max-width: 560px) {
+  #personalModal .modal-content {
+    padding: 18px;
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+
+  #personalModal .person-card {
+    padding: 10px 12px;
+  }
+
+  #personalModal .person-avatar {
+    inline-size: 36px;
+    block-size: 36px;
+    flex-basis: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #personalModal .modal-overlay,
+  #personalModal .modal-content {
+    transition: none;
   }
 }
 

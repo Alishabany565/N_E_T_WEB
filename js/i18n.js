@@ -64,6 +64,9 @@
       authPointInsights: "Fast insights and exports",
 
       personalDetails: "Personal Details",
+      personalDetailsSubtitle: "Shared profiles in this workspace.",
+      copyId: "Copy",
+      copied: "Copied",
       deleteAll: "Delete All Data",
 
       quickAddTitle: "Add expense",
@@ -333,6 +336,9 @@
       authPointInsights: "رؤى وتصدير بسرعة",
 
       personalDetails: "التفاصيل الشخصية",
+      personalDetailsSubtitle: "ملفات المستخدمين في مساحة العمل هذه.",
+      copyId: "نسخ",
+      copied: "تم النسخ",
       deleteAll: "حذف كل البيانات",
 
       quickAddTitle: "إضافة مصروف",
@@ -602,6 +608,9 @@
       authPointInsights: "תובנות וייצוא מהירים",
 
       personalDetails: "פרטים אישיים",
+      personalDetailsSubtitle: "פרופילים משותפים בסביבת העבודה הזו.",
+      copyId: "העתק",
+      copied: "הועתק",
       deleteAll: "מחק את כל הנתונים",
 
       quickAddTitle: "הוסף הוצאה",
