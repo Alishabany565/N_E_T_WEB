@@ -36,7 +36,7 @@
 
   const PERSONAL_DETAILS = [
     { first: "Ali", last: "Shabany", id: "212428569" },
-    { first: "Tala", last: "Jabaren", id: "22222222" }
+    { first: "Tala", last: "Jabaren", id: "327605937" }
   ];
 
   const loadedExpenses = StorageService.loadExpenses(userId);
@@ -175,32 +175,134 @@
     const modal = document.getElementById("personalModal");
     const closeBtn = document.getElementById("closePersonalModal");
     const overlay = modal ? modal.querySelector(".modal-overlay") : null;
+    const copyButtons = modal ? modal.querySelectorAll("[data-copy-person-id]") : [];
+    const OPEN_CLASS = "is-open";
+    const CLOSING_CLASS = "is-closing";
+    const CLOSE_DELAY_MS = 220;
+    const COPIED_DELAY_MS = 900;
+    let closeTimer = null;
 
     if (!btn || !modal){
       console.warn("[PersonalModal] Missing required elements.");
       return;
     }
 
+    function maskId(value){
+      const raw = String(value || "").replace(/\s+/g, "");
+      if (!raw) return "";
+      return `**** ${raw.slice(-4)}`;
+    }
+
+    function syncCards(){
+      const cards = modal.querySelectorAll(".person-card");
+      cards.forEach((card) => {
+        const fullId = String(card.getAttribute("data-person-id") || "").trim();
+        const maskEl = card.querySelector("[data-person-id-mask]");
+        if (maskEl) maskEl.textContent = maskId(fullId);
+
+        const copyBtn = card.querySelector("[data-copy-person-id]");
+        if (copyBtn && fullId){
+          copyBtn.setAttribute("data-copy-person-id", fullId);
+        }
+
+        const name = String(card.querySelector(".person-name")?.textContent || "").trim();
+        const avatar = card.querySelector(".person-avatar");
+        if (avatar){
+          const first = Array.from(name)[0] || "?";
+          avatar.textContent = first.toLocaleUpperCase();
+        }
+      });
+    }
+
+    async function copyToClipboard(text){
+      if (!text) return false;
+
+      if (navigator.clipboard?.writeText){
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+
+      const fallbackInput = document.createElement("textarea");
+      fallbackInput.value = text;
+      fallbackInput.setAttribute("readonly", "");
+      fallbackInput.style.position = "fixed";
+      fallbackInput.style.opacity = "0";
+      fallbackInput.style.pointerEvents = "none";
+      document.body.appendChild(fallbackInput);
+      fallbackInput.select();
+      let copied = false;
+      try {
+        copied = document.execCommand("copy");
+      } finally {
+        fallbackInput.remove();
+      }
+      return copied;
+    }
+
     function openModal(){
       closeMenu();
+      if (closeTimer){
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
       modal.hidden = false;
+      modal.classList.remove(CLOSING_CLASS);
+      requestAnimationFrame(() => {
+        modal.classList.add(OPEN_CLASS);
+        closeBtn?.focus({ preventScroll: true });
+      });
+    }
+
+    function finalizeClose(){
+      modal.hidden = true;
+      modal.classList.remove(CLOSING_CLASS);
+      closeTimer = null;
+      menuBtn?.focus({ preventScroll: true });
     }
 
     function closeModal(){
-      modal.hidden = true;
+      if (modal.hidden) return;
+      modal.classList.remove(OPEN_CLASS);
+      modal.classList.add(CLOSING_CLASS);
+      if (closeTimer) clearTimeout(closeTimer);
+      closeTimer = window.setTimeout(finalizeClose, CLOSE_DELAY_MS);
     }
 
+    async function onCopyClick(copyBtn){
+      const fullId = String(copyBtn.getAttribute("data-copy-person-id") || "").trim();
+      if (!fullId) return;
+
+      try {
+        const copied = await copyToClipboard(fullId);
+        if (!copied) return;
+        copyBtn.disabled = true;
+        copyBtn.textContent = I18N.t("copied");
+        window.setTimeout(() => {
+          copyBtn.disabled = false;
+          copyBtn.textContent = I18N.t("copyId");
+        }, COPIED_DELAY_MS);
+      } catch {
+        // no-op: keep UI stable when clipboard access is blocked
+      }
+    }
+
+    syncCards();
     btn.addEventListener("click", openModal);
 
     if (closeBtn) closeBtn.addEventListener("click", closeModal);
     if (overlay) overlay.addEventListener("click", closeModal);
+    copyButtons.forEach((copyBtn) => {
+      copyBtn.addEventListener("click", () => {
+        void onCopyClick(copyBtn);
+      });
+    });
 
     modal.addEventListener("click", (e) => {
       if (e.target === modal) closeModal();
     });
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeModal();
+      if (e.key === "Escape" && !modal.hidden) closeModal();
     });
   }
 
