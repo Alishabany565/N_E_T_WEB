@@ -9,21 +9,9 @@
   function applyTheme(){
     const t = getTheme();
     document.documentElement.setAttribute("data-theme", t === "light" ? "light" : "dark");
-    const btn = document.getElementById("themeToggle");
-    if (btn){
-      const icon = btn.querySelector("span[aria-hidden='true']");
-      if (icon) icon.textContent = (t === "light") ? "☀" : "☾";
-      btn.setAttribute("title", t === "light" ? I18N.t("msgThemeLight") : I18N.t("msgThemeDark"));
-    }
-  }
-  function toggleTheme(){
-    const cur = getTheme();
-    localStorage.setItem(THEME_KEY, cur === "light" ? "dark" : "light");
-    applyTheme();
   }
 
   applyTheme();
-  document.getElementById("themeToggle")?.addEventListener("click", toggleTheme);
 
   const langSelect = document.getElementById("langSelect");
   if (langSelect){
@@ -33,10 +21,19 @@
     });
   }
 
-  const loginModal = document.getElementById("loginModal");
-  const registerModal = document.getElementById("registerModal");
+  if (Auth.getSession()){
+    window.location.href = "app.html";
+    return;
+  }
+
+  const landingView = document.getElementById("landingView");
+  const loginView = document.getElementById("loginView");
+  const registerView = document.getElementById("registerView");
+
   const btnOpenLogin = document.getElementById("btnOpenLogin");
   const btnOpenRegister = document.getElementById("btnOpenRegister");
+  const toRegister = document.getElementById("toRegister");
+  const toLogin = document.getElementById("toLogin");
 
   const loginForm = document.getElementById("loginForm");
   const registerForm = document.getElementById("registerForm");
@@ -44,64 +41,41 @@
   const registerErrors = document.getElementById("registerErrors");
 
   function showErr(el, msg){
+    if (!el) return;
     el.style.display = msg ? "block" : "none";
     el.textContent = msg || "";
   }
 
-  if (Auth.getSession()){
-    window.location.href = "app.html";
-    return;
+  function showView(view){
+    if (!landingView || !loginView || !registerView) return;
+
+    landingView.hidden = view !== "landing";
+    loginView.hidden = view !== "login";
+    registerView.hidden = view !== "register";
+
+    if (view === "login") document.getElementById("loginEmail")?.focus();
+    if (view === "register") document.getElementById("regName")?.focus();
   }
 
-  let lastFocused = null;
-  function trapFocus(modal){
-    lastFocused = document.activeElement;
-    const focusable = modal.querySelectorAll("button, input, select, textarea, a[href]");
-    const items = Array.from(focusable);
-    if (items.length) items[0].focus();
+  btnOpenLogin?.addEventListener("click", () => showView("login"));
+  btnOpenRegister?.addEventListener("click", () => showView("register"));
+  toRegister?.addEventListener("click", () => showView("register"));
+  toLogin?.addEventListener("click", () => showView("login"));
 
-    modal._trap = (e) => {
-      if (e.key !== "Tab") return;
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
-    };
-    modal.addEventListener("keydown", modal._trap);
-  }
-  function releaseFocus(modal){
-    if (modal?._trap) modal.removeEventListener("keydown", modal._trap);
-    if (lastFocused) lastFocused.focus();
-  }
-
-  function openModal(m){ m.hidden = false; trapFocus(m); }
-  function closeModal(m){ m.hidden = true; releaseFocus(m); }
-
-  btnOpenLogin?.addEventListener("click", () => openModal(loginModal));
-  btnOpenRegister?.addEventListener("click", () => openModal(registerModal));
-
-  document.querySelectorAll("[data-close='login']").forEach(b => b.addEventListener("click", () => closeModal(loginModal)));
-  document.querySelectorAll("[data-close='register']").forEach(b => b.addEventListener("click", () => closeModal(registerModal)));
-
-  document.getElementById("toRegister")?.addEventListener("click", () => { closeModal(loginModal); openModal(registerModal); });
-  document.getElementById("toLogin")?.addEventListener("click", () => { closeModal(registerModal); openModal(loginModal); });
-
-  [loginModal, registerModal].forEach(m => {
-    m?.addEventListener("click", (e) => { if (e.target === m) closeModal(m); });
-  });
   document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape") return;
-    if (loginModal && !loginModal.hidden) closeModal(loginModal);
-    if (registerModal && !registerModal.hidden) closeModal(registerModal);
+    if (e.key === "Escape"){
+      showView("landing");
+    }
   });
 
   loginForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     showErr(loginErrors, "");
+
     try{
       await Auth.login({
-        email: document.getElementById("loginEmail").value.trim(),
-        password: document.getElementById("loginPassword").value
+        email: document.getElementById("loginEmail")?.value.trim() || "",
+        password: document.getElementById("loginPassword")?.value || ""
       });
       window.location.href = "app.html";
     } catch {
@@ -112,12 +86,19 @@
   registerForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     showErr(registerErrors, "");
+
+    const fullName = document.getElementById("regName")?.value.trim() || "";
+    const email = document.getElementById("regEmail")?.value.trim() || "";
+    const password = document.getElementById("regPassword")?.value || "";
+    const confirmPassword = document.getElementById("regConfirmPassword")?.value || "";
+
+    if (password !== confirmPassword){
+      showErr(registerErrors, I18N.t("msgPasswordMismatch"));
+      return;
+    }
+
     try{
-      await Auth.register({
-        fullName: document.getElementById("regName").value.trim(),
-        email: document.getElementById("regEmail").value.trim(),
-        password: document.getElementById("regPassword").value
-      });
+      await Auth.register({ fullName, email, password });
       window.location.href = "app.html";
     } catch {
       showErr(registerErrors, I18N.t("msgRegisterFail"));

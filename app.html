@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-i18n="appTitle">Expense Tracker</title>
+  <title>Expense Tracker</title>
   <link rel="stylesheet" href="css/app.css" />
 </head>
 
@@ -14,7 +14,7 @@
     id="a11yFab"
     class="a11y-fab"
     type="button"
-    aria-label="Accessibility" data-i18n-aria="accessibility"
+    aria-label="Accessibility"
     aria-expanded="false"
     aria-controls="a11yPanel"
   ><span aria-hidden="true">♿</span></button>
@@ -22,7 +22,7 @@
   <div id="a11yPanel" class="a11y-panel" hidden>
     <div class="a11y-panel-head">
       <h3 data-i18n="accessibility">Accessibility</h3>
-      <button id="a11yClose" class="a11y-close" type="button" aria-label="Close" data-i18n-aria="close">x</button>
+      <button id="a11yClose" class="a11y-close" type="button">x</button>
     </div>
     <div class="a11y-panel-body">
       <button class="a11y-opt" type="button" data-a11y="bigtext" data-i18n="biggerText">Bigger text</button>
@@ -32,7 +32,7 @@
   </div>
 
   <header class="topbar">
-    <div class="brand" aria-label="Expense Tracker" data-i18n-aria="appTitle">
+    <div class="brand" aria-label="Expense Tracker">
       <div class="logo" aria-hidden="true">$</div>
       <div>
         <div class="title" data-i18n="appTitle">Expense Tracker</div>
@@ -42,14 +42,14 @@
 
     <div class="right-actions">
       <label class="sr-only" for="langSelect" data-i18n="language">Language</label>
-      <select id="langSelect" class="select" aria-label="Language" data-i18n-aria="language">
-        <option value="en" data-i18n="langEnglish">English</option>
-        <option value="ar" data-i18n="langArabic">العربية</option>
-        <option value="he" data-i18n="langHebrew">עברית</option>
+      <select id="langSelect" class="select" aria-label="Language">
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+        <option value="he">עברית</option>
       </select>
 
-      <button id="themeToggle" class="icon-btn" type="button" aria-label="Theme" data-i18n-aria="theme" title="Theme" data-i18n-title="theme">
-        <span aria-hidden="true">â˜¾</span>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Theme" title="Theme">
+        <span aria-hidden="true">☾</span>
       </button>
 
       <button
@@ -62,7 +62,7 @@
         data-i18n="menu"
       >Menu</button>
 
-      <div id="userMenu" class="menu" hidden role="menu" aria-label="User menu" data-i18n-aria="userMenuLabel">
+      <div id="userMenu" class="menu" hidden role="menu" aria-label="User menu">
         <button id="btnPersonal" class="menu-item" type="button" role="menuitem" data-i18n="personalDetails">Personal Details</button>
         <button id="btnShortcuts" class="menu-item" type="button" role="menuitem" data-i18n="shortcutsTitle">Keyboard shortcuts</button>
         <div class="menu-sep" aria-hidden="true"></div>
@@ -74,10 +74,10 @@
 
   <main id="main" class="container">
     <div class="layout">
-      <aside class="sidebar" aria-label="Navigation" data-i18n-aria="navigation">
+      <aside class="sidebar" aria-label="Navigation">
         <div class="sidebar-pane">
-          <div class="sidebar-title" data-i18n="dashboard">Dashboard</div>
-          <div class="tabs sidebar-tabs" role="tablist" aria-label="Dashboard tabs" data-i18n-aria="dashboardTabs">
+          <div class="sidebar-title">Dashboard</div>
+          <div class="tabs sidebar-tabs" role="tablist" aria-label="Dashboard tabs">
             <button
               id="tabList"
               class="tab is-active"
@@ -98,17 +98,17 @@
         </div>
 
         <div class="sidebar-pane sidebar-note">
-          <div class="sidebar-chip" data-i18n="monthlyFlow">Monthly Flow</div>
-          <p data-i18n="monthlyFlowDesc">Track spending, budget, and trends in one place.</p>
+          <div class="sidebar-chip">Monthly Flow</div>
+          <p>Track spending, budget, and trends in one place.</p>
         </div>
       </aside>
 
       <div class="main">
-        <section class="card welcome-card" aria-label="Welcome" data-i18n-aria="welcome">
+        <section class="card welcome-card" aria-label="Welcome">
           <div class="welcome-row">
             <div>
-              <h1 id="welcomeTitle" data-i18n="welcomeTitle"></h1>
-               <p id="welcomeSub" data-i18n="welcomeSub"></p>
+              <h1 id="welcomeTitle" class="welcome-title">Hi, Tala 👋</h1>
+              <p id="welcomeSub" class="welcome-sub">Ready to track your spending today?</p>
             </div>
             <div class="welcome-meta">
               <span id="welcomeDate" class="welcome-date"></span>
@@ -118,21 +118,21 @@
 
         <section id="spendingAlert" class="card alert-card" hidden aria-live="polite">
           <div class="alert-left">
-            <div id="alertIcon" class="alert-icon">âš ï¸</div>
+            <div id="alertIcon" class="alert-icon">⚠️</div>
             <div>
-              <div id="alertTitle" class="alert-title" data-i18n="alertDefaultTitle">Alert</div>
-              <div id="alertMsg" class="alert-msg" data-i18n="alertDefaultMsg">Message</div>
+              <div id="alertTitle" class="alert-title">Alert</div>
+              <div id="alertMsg" class="alert-msg">Message</div>
             </div>
           </div>
         </section>
 
         <div class="top-row">
-          <section class="card insights-card" aria-label="Insights summary" data-i18n-aria="insightsSummary">
+          <section class="card insights-card" aria-label="Insights summary">
             <div class="insight-box">
-              <div id="predictionBox">â€”</div>
+              <div id="predictionBox">—</div>
             </div>
             <div class="insight-box">
-              <div id="smartInsightsBox">â€”</div>
+              <div id="smartInsightsBox">—</div>
             </div>
           </section>
 
@@ -147,10 +147,10 @@
 
             <div class="progress-wrap">
               <div class="progress-head">
-                <span class="hint" id="budgetPctLabel">â€”</span>
+                <span class="hint" id="budgetPctLabel">—</span>
                 <span class="hint" id="budgetProgressHint"></span>
               </div>
-              <div class="progress" aria-label="Budget progress" data-i18n-aria="budgetProgress">
+              <div class="progress" aria-label="Budget progress">
                 <div id="budgetBar" class="progress-bar"></div>
               </div>
             </div>
@@ -165,10 +165,10 @@
                   </div>
                 </div>
 
-                <div id="currencyTiles" class="currency-tiles" role="radiogroup" aria-label="Currency" data-i18n-aria="currency"></div>
+                <div id="currencyTiles" class="currency-tiles" role="radiogroup" aria-label="Currency"></div>
 
                 <label class="sr-only" for="currency" data-i18n="showIn">Show amounts in:</label>
-                <select id="currency" class="select sr-only" aria-label="Currency" data-i18n-aria="currency">
+                <select id="currency" class="select sr-only" aria-label="Currency">
                   <option value="ILS">ILS</option>
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -184,10 +184,10 @@
         <div id="panelList" class="panel">
         <section class="card quote-card">
           <div class="quote-header">
-            <h2 data-i18n="quoteTitle">ðŸ’¡ Financial Quote</h2>
-            <button id="btnRefreshQuote" class="btn small" type="button" data-i18n="refreshQuote">Refresh</button>
+            <h2>💡 Financial Quote</h2>
+            <button id="btnRefreshQuote" class="btn small" type="button">Refresh</button>
           </div>
-          <p id="quoteText" class="quote-text" data-i18n="quoteLoading">Loading...</p>
+          <p id="quoteText" class="quote-text">Loading...</p>
           <span id="quoteAuthor" class="quote-author"></span>
         </section>
 
@@ -275,7 +275,7 @@
               <span class="filters-arrow" aria-hidden="true">+</span>
             </summary>
             <div class="filters-details-body">
-              <p class="hint" data-i18n="filtersHint">Open advanced filters for payment type, category, date range, and sorting.</p>
+              <p class="hint">Open advanced filters for payment type, category, date range, and sorting.</p>
               <button
                 id="btnOpenFilters"
                 class="btn"
@@ -294,7 +294,7 @@
             </div>
           </div>
 
-          <div class="metrics-grid" aria-label="Summary metrics" data-i18n-aria="summaryMetrics">
+          <div class="metrics-grid" aria-label="Summary metrics">
             <article class="metric-card metric-one">
               <div class="metric-icon" aria-hidden="true">#</div>
               <div class="metric-copy">
@@ -307,7 +307,7 @@
               <div class="metric-icon" aria-hidden="true">$</div>
               <div class="metric-copy">
                 <span data-i18n="monthSpent">Spent</span>
-                <b id="monthTotal">â€”</b>
+                <b id="monthTotal">—</b>
               </div>
             </article>
 
@@ -315,7 +315,7 @@
               <div class="metric-icon" aria-hidden="true">R</div>
               <div class="metric-copy">
                 <span data-i18n="monthRemaining">Remaining</span>
-                <b id="monthRemaining">â€”</b>
+                <b id="monthRemaining">—</b>
               </div>
             </article>
 
@@ -323,21 +323,21 @@
               <div class="metric-icon" aria-hidden="true">FX</div>
               <div class="metric-copy">
                 <span data-i18n="displayTotal">In currency</span>
-                <b id="displayTotal">â€”</b>
+                <b id="displayTotal">—</b>
               </div>
             </article>
           </div>
 
-          <div class="month-compare card mini-card" aria-label="Monthly comparison" data-i18n-aria="monthlyComparison">
-            <div class="compare-title" data-i18n="compareTitle">Compared to last month</div>
-            <div id="compareValue" class="compare-value">â€”</div>
+          <div class="month-compare card mini-card" aria-label="Monthly comparison">
+            <div class="compare-title">Compared to last month</div>
+            <div id="compareValue" class="compare-value">—</div>
           </div>
 
           <div class="panel">
             <div id="emptyState" class="empty" hidden data-i18n="emptyState">No expenses yet. Add your first one.</div>
 
             <div class="table-wrap table-modern">
-              <table class="table" aria-label="Expenses table" data-i18n-aria="expensesTable">
+              <table class="table" aria-label="Expenses table">
                 <thead>
                   <tr>
                     <th data-i18n="thDate">Date</th>
@@ -377,37 +377,37 @@
               </div>
             </div>
 
-            <section class="card heatmap-card" aria-label="Spending heatmap" data-i18n-aria="heatmapTitle">
+            <section class="card heatmap-card" aria-label="Spending heatmap">
               <div class="heatmap-head">
                 <div>
-                  <h2 data-i18n="heatmapTitle">ðŸ“… Spending Heatmap</h2>
-                  <p class="muted" data-i18n="heatmapSubtitle">Darker day = higher spending</p>
+                  <h2>📅 Spending Heatmap</h2>
+                  <p class="muted">Darker day = higher spending</p>
                 </div>
 
                 <div class="heatmap-legend">
-                  <span class="legend-label" data-i18n="heatmapLess">Less</span>
+                  <span class="legend-label">Less</span>
                   <span class="legend-box h0"></span>
                   <span class="legend-box h1"></span>
                   <span class="legend-box h2"></span>
                   <span class="legend-box h3"></span>
                   <span class="legend-box h4"></span>
-                  <span class="legend-label" data-i18n="heatmapMore">More</span>
+                  <span class="legend-label">More</span>
                 </div>
               </div>
 
               <div id="heatmapGrid" class="heatmap-grid" role="grid"></div>
-              <div id="heatmapHint" class="heatmap-hint muted" data-i18n="heatmapHintDefault">Click a day to see total.</div>
+              <div id="heatmapHint" class="heatmap-hint muted">Click a day to see total.</div>
             </section>
           </div>
         </section>
       </div>
     </div>
 
-    <div id="filtersModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Filters" data-i18n-aria="filters">
+    <div id="filtersModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Filters">
       <div class="modal-card modal-filters">
         <div class="modal-head">
           <h2 data-i18n="filters">Filters</h2>
-          <button id="filtersClose" class="icon-btn" type="button" aria-label="Close" data-i18n-aria="close">x</button>
+          <button id="filtersClose" class="icon-btn" type="button" aria-label="Close">x</button>
         </div>
 
         <div class="filters-form">
@@ -465,11 +465,11 @@
       </div>
     </div>
 
-    <div id="shortcutsModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Shortcuts" data-i18n-aria="shortcutsTitle">
+    <div id="shortcutsModal" class="modal" hidden role="dialog" aria-modal="true" aria-label="Shortcuts">
       <div class="modal-card">
         <div class="modal-head">
           <h2 data-i18n="shortcutsTitle">Keyboard shortcuts</h2>
-          <button id="shortcutsClose" class="icon-btn" type="button" aria-label="Close" data-i18n-aria="close">x</button>
+          <button id="shortcutsClose" class="icon-btn" type="button" aria-label="Close">x</button>
         </div>
         <ul class="shortcuts">
           <li><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>F</kbd> - <span data-i18n="scSearch">Focus search</span></li>
@@ -483,12 +483,12 @@
     <div id="personalModal" class="modal" hidden>
       <div class="modal-overlay"></div>
       <div class="modal-content">
-        <button id="closePersonalModal" class="modal-close" type="button" aria-label="Close" data-i18n-aria="close">Ã—</button>
-        <h2 data-i18n="personalDetails">Personal Details</h2>
+        <button id="closePersonalModal" class="modal-close" type="button" aria-label="Close">×</button>
+        <h2>Personal Details</h2>
         <div class="personal-list">
-          <p><strong>Ali Shabany</strong><br><span data-i18n="idLabel">ID</span>: 212428569</p>
+          <p><strong>Ali Shabany</strong><br>ID: 212428569</p>
           <hr />
-          <p><strong>Tala Jabaren</strong><br><span data-i18n="idLabel">ID</span>: 327605937</p>
+          <p><strong>Tala Jabaren</strong><br>ID: 327605937</p>
         </div>
       </div>
     </div>
@@ -507,5 +507,3 @@
   <script src="js/app.js"></script>
 </body>
 </html>
-
-

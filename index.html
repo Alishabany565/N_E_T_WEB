@@ -37,9 +37,9 @@
   <header class="topbar" role="banner">
     <div class="brand" aria-label="Brand" data-i18n-aria="brand">
       <span class="logo" aria-hidden="true">$</span>
-      <div>
+      <div class="brand-copy">
         <div class="title" data-i18n="appTitle">Expense Tracker</div>
-        <div class="sub" data-i18n="landingTag">Smart tracking â€¢ Clear insights</div>
+        <p class="tagline" data-i18n="landingTag">Smart tracking • Clear insights</p>
       </div>
     </div>
 
@@ -47,139 +47,119 @@
       <label class="sr-only" for="langSelect" data-i18n="language">Language</label>
       <select id="langSelect" class="select" aria-label="Language" data-i18n-aria="language">
         <option value="en" data-i18n="langEnglish">English</option>
-        <option value="ar" data-i18n="langArabic">Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</option>
-        <option value="he" data-i18n="langHebrew">×¢×‘×¨×™×ª</option>
+        <option value="ar" data-i18n="langArabic">العربية</option>
+        <option value="he" data-i18n="langHebrew">עברית</option>
       </select>
-
-      <button id="themeToggle" class="icon-btn" type="button" aria-label="Theme" data-i18n-aria="theme" title="Theme" data-i18n-title="theme">
-        <span aria-hidden="true">â˜¾</span>
-        <span class="sr-only" data-i18n="theme">Theme</span>
-      </button>
-
-      <button class="btn" id="btnOpenLogin" data-i18n="login">Login</button>
     </div>
   </header>
 
   <main id="main" class="wrap" role="main">
-    <section class="hero" aria-label="Intro" data-i18n-aria="intro">
-      <div class="hero-content">
-        <p class="eyebrow" data-i18n="landingEyebrow">Colorful personal finance dashboard</p>
-        <h1 data-i18n="landingHeadline">Track your spending smarter</h1>
-        <p data-i18n="landingText">
-          Add expenses in seconds, see your monthly total, and view simple insights.
-        </p>
+    <section id="landingView" class="landing-view" aria-label="Landing" data-i18n-aria="intro">
+      <span class="landing-blob landing-blob-a" aria-hidden="true"></span>
+      <span class="landing-blob landing-blob-b" aria-hidden="true"></span>
+      <span class="landing-blob landing-blob-c" aria-hidden="true"></span>
 
-        <div class="cta">
-          <button class="btn primary" id="btnOpenRegister" data-i18n="register">Create account</button>
-        </div>
+      <div class="landing-stack">
+        <h1 class="landing-brand">
+          <span class="landing-brand-icon" aria-hidden="true">$</span>
+          <span data-i18n="appTitle">Expense Tracker</span>
+        </h1>
 
-        <ul class="bullets" aria-label="Highlights" data-i18n-aria="highlights">
-          <li data-i18n="landingB1">Add expenses fast (amount, category, date)</li>
-          <li data-i18n="landingB2">Search + simple filters</li>
-          <li data-i18n="landingB3">Charts and budget warning</li>
-          <li data-i18n="landingB4">Currency conversion via external API</li>
-        </ul>
-      </div>
-
-      <div class="hero-image" aria-hidden="true">
-        <div class="glass">
-          <div class="glass-head">
-            <span class="pill" data-i18n="tabList">List</span>
-            <span class="pill" data-i18n="tabInsights">Insights</span>
-            <span class="pill" data-i18n="budgetTitle">Budget</span>
+        <div class="landing-glass-card">
+          <h2 class="landing-title" data-i18n="letsGetStarted">Let's Get Started</h2>
+          <div class="landing-actions">
+            <button class="btn primary auth-cta" id="btnOpenLogin" type="button" data-i18n="login">Login</button>
+            <button class="btn auth-cta" id="btnOpenRegister" type="button" data-i18n="signup">Sign Up</button>
           </div>
-          <div class="metric-strip">
-            <div class="mini-card one"></div>
-            <div class="mini-card two"></div>
-            <div class="mini-card three"></div>
-            <div class="mini-card four"></div>
-          </div>
-          <div class="chart-mini"></div>
-          <div class="lines">
-            <span></span><span></span><span></span>
-          </div>
+          <p class="landing-description" data-i18n="landingDesc">Track your expenses, manage your budget, and gain clear financial insights - all in one place.</p>
         </div>
       </div>
     </section>
 
-    <section class="info" aria-label="Info" data-i18n-aria="info">
-      <div class="info-card">
-        <h2 data-i18n="landingPrivacyTitle">Privacy</h2>
-        <p data-i18n="landingPrivacyText">
-          Your data stays on your device (localStorage).
-        </p>
+    <section id="loginView" class="auth-view" hidden aria-labelledby="loginTitle">
+      <div class="auth-view-card">
+        <aside class="auth-decor" aria-hidden="true">
+          <span class="blob blob-a"></span>
+          <span class="blob blob-b"></span>
+          <span class="grid-lines"></span>
+        </aside>
+
+        <section class="auth-form-pane">
+          <div class="auth-head">
+            <h2 id="loginTitle" data-i18n="login">Login</h2>
+          </div>
+
+          <form id="loginForm" novalidate>
+            <label class="lbl" for="loginEmail">
+              <span data-i18n="email">Email</span>
+              <input type="email" id="loginEmail" autocomplete="email" required />
+            </label>
+
+            <label class="lbl" for="loginPassword">
+              <span data-i18n="password">Password</span>
+              <input type="password" id="loginPassword" autocomplete="current-password" required />
+            </label>
+
+            <div id="loginErrors" class="errors" aria-live="polite"></div>
+
+            <button class="btn primary full" type="submit" data-i18n="login">Login</button>
+          </form>
+
+          <p class="switch">
+            <span data-i18n="authNoAccountQ">Don't have an account?</span>
+            <button class="link" id="toRegister" type="button" data-i18n="signup">Sign Up</button>
+          </p>
+        </section>
       </div>
-      <div class="info-card">
-        <h2 data-i18n="landingTipTitle">Tip</h2>
-        <p data-i18n="landingTipText">Set a monthly budget to get a simple warning when you get close.</p>
+    </section>
+
+    <section id="registerView" class="auth-view" hidden aria-labelledby="registerTitle">
+      <div class="auth-view-card">
+        <aside class="auth-decor auth-decor-alt" aria-hidden="true">
+          <span class="blob blob-a"></span>
+          <span class="blob blob-b"></span>
+          <span class="grid-lines"></span>
+        </aside>
+
+        <section class="auth-form-pane">
+          <div class="auth-head">
+            <h2 id="registerTitle" data-i18n="signup">Sign Up</h2>
+          </div>
+
+          <form id="registerForm" novalidate>
+            <label class="lbl" for="regName">
+              <span data-i18n="firstNameOptional">First name (optional)</span>
+              <input type="text" id="regName" autocomplete="given-name" />
+            </label>
+
+            <label class="lbl" for="regEmail">
+              <span data-i18n="email">Email</span>
+              <input type="email" id="regEmail" autocomplete="email" required />
+            </label>
+
+            <label class="lbl" for="regPassword">
+              <span data-i18n="password">Password</span>
+              <input type="password" id="regPassword" autocomplete="new-password" required />
+            </label>
+
+            <label class="lbl" for="regConfirmPassword">
+              <span data-i18n="confirmPassword">Confirm password</span>
+              <input type="password" id="regConfirmPassword" autocomplete="new-password" required />
+            </label>
+
+            <div id="registerErrors" class="errors" aria-live="polite"></div>
+
+            <button class="btn primary full" type="submit" data-i18n="createAccount">Create Account</button>
+          </form>
+
+          <p class="switch">
+            <span data-i18n="authHaveAccountQ">Already have an account?</span>
+            <button class="link" id="toLogin" type="button" data-i18n="login">Login</button>
+          </p>
+        </section>
       </div>
     </section>
   </main>
-
-  <div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" hidden>
-    <div class="modal-card">
-      <div class="modal-head">
-        <h3 id="loginTitle" data-i18n="login">Login</h3>
-        <button class="icon-btn" data-close="login" aria-label="Close" data-i18n-aria="close">x</button>
-      </div>
-
-      <form id="loginForm" novalidate>
-        <label class="lbl">
-          <span data-i18n="email">Email</span>
-          <input type="email" id="loginEmail" autocomplete="email" required />
-        </label>
-
-        <label class="lbl">
-          <span data-i18n="password">Password</span>
-          <input type="password" id="loginPassword" autocomplete="current-password" required />
-        </label>
-
-        <div id="loginErrors" class="errors" aria-live="polite"></div>
-
-        <button class="btn primary full" type="submit" data-i18n="login">Login</button>
-      </form>
-
-      <p class="switch">
-        <span data-i18n="noAccount">No account?</span>
-        <button class="link" id="toRegister" type="button" data-i18n="register">Create account</button>
-      </p>
-    </div>
-  </div>
-
-  <div class="modal" id="registerModal" role="dialog" aria-modal="true" aria-labelledby="registerTitle" hidden>
-    <div class="modal-card">
-      <div class="modal-head">
-        <h3 id="registerTitle" data-i18n="register">Create account</h3>
-        <button class="icon-btn" data-close="register" aria-label="Close" data-i18n-aria="close">x</button>
-      </div>
-
-      <form id="registerForm" novalidate>
-        <label class="lbl">
-          <span data-i18n="fullName">Full name</span>
-          <input type="text" id="regName" autocomplete="name" required />
-        </label>
-
-        <label class="lbl">
-          <span data-i18n="email">Email</span>
-          <input type="email" id="regEmail" autocomplete="email" required />
-        </label>
-
-        <label class="lbl">
-          <span data-i18n="password">Password</span>
-          <input type="password" id="regPassword" autocomplete="new-password" required />
-        </label>
-
-        <div id="registerErrors" class="errors" aria-live="polite"></div>
-
-        <button class="btn primary full" type="submit" data-i18n="register">Create account</button>
-      </form>
-
-      <p class="switch">
-        <span data-i18n="haveAccount">Already have an account?</span>
-        <button class="link" id="toLogin" type="button" data-i18n="login">Login</button>
-      </p>
-    </div>
-  </div>
 
   <script src="js/i18n.js"></script>
   <script src="js/a11y.js"></script>
