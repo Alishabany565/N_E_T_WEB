@@ -198,7 +198,7 @@
       cards.forEach((card) => {
         const fullId = String(card.getAttribute("data-person-id") || "").trim();
         const maskEl = card.querySelector("[data-person-id-mask]");
-        if (maskEl) maskEl.textContent = maskId(fullId);
+        if (maskEl) maskEl.textContent = fullId;
 
         const copyBtn = card.querySelector("[data-copy-person-id]");
         if (copyBtn && fullId){
