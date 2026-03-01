@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   const KEY_LANG = "et_lang_v3";
   const DEFAULT_LANG = "en";
 

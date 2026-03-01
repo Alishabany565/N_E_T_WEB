@@ -537,7 +537,7 @@ body.a11y-contrast {
 
 .top-row {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1fr 1.1fr;
   gap: 16px;
 }
 
